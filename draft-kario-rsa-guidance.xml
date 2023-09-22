@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="US-ASCII"?>
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
+
+<!ENTITY RFC2119 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2119.xml">
+<!ENTITY RFC8017 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8017.xml">
+
+]>
+<?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
+<?rfc strict="yes" ?>
+<?rfc toc="yes"?>
+<?rfc tocdepth="4"?>
+<?rfc symrefs="yes"?>
+<!-- use symbolic references tags, i.e, [RFC2119] instead of [1] -->
+<?rfc sortrefs="yes" ?>
+<!-- control vertical white space 
+     (using these PIs as follows is recommended by the RFC Editor) -->
+<?rfc compact="yes" ?>
+<!-- do not start each main section on a new page -->
+<?rfc subcompact="no" ?>
+<!-- keep one blank line between list items -->
+<!-- end of list of popular I-D processing instructions -->
+<rfc category="info" docName="draft-kario-rsa-guidance-01" ipr="trust200902"
+    updates="8017">
+  <!-- ***** FRONT MATTER ***** -->
+
+  <front>
+      <title abbrev="RSA Implementation Guidance">Implementation Guidance for
+      the PKCS #1 RSA Cryptography Specification</title>
+
+    <author fullname="Hubert Kario" initials="H." role="editor"
+            surname="Kario">
+      <organization>Red Hat, Inc.</organization>
+
+      <address>
+        <postal>
+          <street>Purkynova 115</street>
+
+          <city>Brno</city>
+
+          <region></region>
+
+          <code>61200</code>
+
+          <country>Czech Republic</country>
+        </postal>
+
+        <phone></phone>
+
+        <email>hkario@redhat.com</email>
+      </address>
+    </author>
+
+    <date day="22" month="September" year="2023" />
+
+    <area>General</area>
+
+    <workgroup>Internet Engineering Task Force</workgroup>
+
+    <keyword>RSA</keyword>
+
+    <abstract>
+        <t>This document specifies additions and amendments to
+        RFC 8017. Specifically, it provides guidence to implementers
+        of the standard to protect against side-channel attacks.
+        It also deprecates the PKCS #1 v1.5 encryption padding, but
+        provides an alternative depadding algorithm that protects against
+        side-channel attacks raising from users of vulnerable APIs.
+        The purpose of this specification is to increase security of
+        RSA implementations.
+      </t>
+    </abstract>
+  </front>
+
+  <middle>
+    <section title="Introduction">
+        <t>The <xref target="RFC8017">PKCS #1</xref> specification
+        describes the RSA cryptosystem, providing guidance on implementing
+        encryption schemes and signature schemes.</t>
+
+        <t>Unfortunately, typical uses of RSA encryption schemes leave it
+        vulnerable to side-channel attacks. Protections against them
+        are not documented there, and attacks are mentioned only in passing.
+        </t>
+    </section>
+
+    <section title="Rationale">
+        <t>The PKCS #1 v1.5 padding is known to be problematic since 1998,
+        when Daniel Bleichenbacher published his attack.
+        Side-channel attacks against public key implementations, including RSA,
+        are known to be possible since 1996 thanks to work by Paul Kocher.
+        Despite those results, side-channel attacks against RSA implementations
+        have proliferated for the next 25 years.
+        </t>
+        <t>We thus provide guidance how to implement those algorithms
+        in a way that should be secure against at least the simple timing
+        side channel attacks.
+        </t>
+    </section>
+
+    <section title="Requirements Language">
+      <t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+      "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+      document are to be interpreted as described in <xref
+      target="RFC2119">RFC 2119</xref>.</t>
+    </section>
+
+    <!-- This PI places the pagebreak correctly (before the section title) in the text output. -->
+
+    <?rfc needLines="8" ?>
+
+    <section title="Side channel attacks">
+        <t>Cryptographic implementations may provide a lot of indirect signals
+        to the attacker that includes information about the secret
+        processed data. Depending on type of information, those leaks can
+        be used to decrypt data or retrieve private keys.
+        Most common side-channels that leak information about secret
+        data are:
+        <list style="numbers">
+            <t>Different errors returned</t>
+            <t>Different processing times of operations</t>
+            <t>Different patterns of jump instructions and memory accesses</t>
+            <t>Use of hardware instructions that take different amount
+               time to execute depending on operands or result</t>
+       </list>
+       </t>
+       <t>Some of those leaks may be detectable over the network, while
+           others may require closer access to the attacked system.
+           With closer access, the attacker may be able to measure
+           power usage, electromagnetic emanations, or sounds and
+           correlate them with specific bits of secret information.
+       </t>
+    </section>
+
+    <section title="General recommendations">
+        <t>As a general rule, all operations that process secret information
+          (be it parts of the private key or parts of encrypted message)
+          SHOULD be performed with code that doesn't have secret data dependent
+          branch instructions, secret data dependent memory accesses, or
+          uses non-constant time machine instructions (architecture dependant,
+          but division is commonly non-constant time).
+        </t>
+        <t>Special care should be placed around the code that handles
+        the conversion of the numerical representation to the octet string
+            representation in RSA decryption operations.</t>
+
+        <t>All operations that use private keys SHOULD additionally employ
+        both base blinding and exponent blinding as protections against
+            leaks inside modular exponentiation code.</t>
+    </section>
+
+    <section title="Side-channel free modular exponentiation">
+        <t>The underlying modular exponentiation algorithm MUST be
+           constant time with regards to the exponent in all uses of the
+           private key.</t>
+       <t>For private key decryption the modular exponentiation algorithm
+       MUST be constant time with regards to the output of the
+           exponentiation.</t>
+       <t>In case the Chinese remainder theorem optimisation is used the
+        modular exponentiation algorithm must also be constant time
+           with regards to the used modulus.</t>
+        <section title="General recommendations">
+            <t>It's especially important to make sure that all values that
+            are secret to the attacker are stored in memory buffers that
+                have sizes determined by public values.</t>
+            <t>For example, the private exponenents should be stored in
+                memory buffers that have sizes determined by the public
+                modulus value, not the numerical values of the exponents
+                themselves.</t>
+            <t>Similarly, the size of the output buffer for multiplication
+            should always be equal to the combined size of multiplicands.
+            The output size of the modular reduction operation should
+            similarly be equal to the size of the modulus and not depend
+                on bit size of the output.</t>
+        </section>
+        <section title="Montgomery ladder">
+        <t>For the modular exponentiation algorithm to be side-channel free
+            every step of the calculation MUST NOT depend on the bits of
+            the exponent. In particular, use of simple square and multiply
+            algorithm will leak information about bits of the exponent
+            through lack of multiplication operation in individual
+            exponentiation steps.</t>
+        <t>The recommended workaround against it, is the use of the
+            Montgomery ladder construction.</t>
+        <t>While that approach ensures that both the square and multiply
+        operations are performed, the fact that the results of them are
+        placed in different memory locations based on bits of the secret
+        exponent. That will provide enough information for an attacker
+            to recover the bits of the exponent. To counteract it,
+        the implementation should ensure that both memory locations
+        are accessed and updated on every step.
+        </t>
+        </section>
+        <section title="Montgomery reduction in multiplication">
+            <t>As multiplication operations quickly make the intermediate
+            values in modular exponentiation large, performing a modular
+            reduction after every multiplication or squaring operation
+                is a common optimisation.</t>
+            <t>To further optimise the modular reduction, the Montgomery
+            modular multiplication is used for performing the combined
+            multiply-and-reduce operation. The last step of that operation
+            is conditional on the value of the output. A side-channel
+            free implementation should perfom the subtraction in all cases
+            and then copy the result or the first operand of the subtraction
+            based on sign of the result of the subtraction.
+        </t>
+        </section>
+    </section>
+
+    <section title="Base blinding">
+        <t>As protection against multiple attacks, it's RECOMMENDED to
+            perform all operations involving the private key with the use
+            of blinding.</t>
+        <t>It should be noted that for decryption operations the
+            unblinding operation MUST be performed using side-channel free
+            code that does not leak information about the result of this
+            multiplication and reduction modulo operation.</t>
+        <t>(describe the base blinding use)</t>
+        <t>It's RECOMMENDED to generate a completely new blinding parameters
+            every few hundred private key operations.</t>
+    </section>
+
+    <section title="Exponent blinding">
+        <t>To further protect against private key leaks, it's RECOMMENDED
+            to perform the blinding of the used exponents.</t>
+        <t>(describe the exponent blinding algorithm here)</t>
+    </section>
+
+    <section title="Depadding">
+        <t>In case of RSA-OAEP, the padding is self-verifying, thus the
+            depadding operation needs follow the standard algorithm
+            to provide a safe API to users.</t>
+        <t>It MUST ignore the value of the very fist octet of padding and
+            process the remaining bytes as if it was equal zero.</t>
+        <t>The PKCS #1 v1.5 padding is considered deprecated, and should be
+        used only to process legacy data. It MUST NOT be used as part
+            of online protocols or API endpoints.</t>
+        <section title="Implicit rejection">
+            <t>For implementations that cannot remove support for the PKCS #1
+             v1.5 padding, it's possible to implement an implicit rejection
+             algorithm as a protection measure. It should be noted that
+             implementing it is hard, thus it's RECOMMENDED instead to
+             disable support for PKCS #1 v1.5 padding instead.</t>
+         <t>(describe the Marvin workaround/implicit rejection in terms of
+            PKCS #1 v1.5)</t>
+        </section>
+    </section>
+
+    <section title="Deprecated Algorithms">
+        <t>Current protocols deployments SHOULD NOT use
+            encryption with RSA PKCS #1 v1.5 padding.
+            Support for RSA PKCS #1 v1.5 SHOULD be disabled in default
+            configuration.
+            All new protocols MUST NOT specify PKCS #1 v1.5 as a valid
+            encryption padding for RSA keys.</t>
+    </section>
+
+    <!-- Possibly a 'Contributors' section ... -->
+
+    <section anchor="IANA" title="IANA Considerations">
+      <t>This memo includes no request to IANA.</t>
+    </section>
+
+    <section anchor="Security" title="Security Considerations">
+        <t>This whole document specifies security considerations for
+        RSA implementations.
+      </t>
+    </section>
+  </middle>
+
+  <!--  *****BACK MATTER ***** -->
+
+  <back>
+    <!-- References split into informative and normative -->
+
+
+    <references title="Normative References">
+
+      &RFC8017;
+
+    </references>
+
+    <references title="Informative References">
+      &RFC2119;
+
+    </references>
+
+  </back>
+</rfc>
