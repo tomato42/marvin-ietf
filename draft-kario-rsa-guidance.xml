@@ -249,8 +249,133 @@
              algorithm as a protection measure. It should be noted that
              implementing it is hard, thus it's RECOMMENDED instead to
              disable support for PKCS #1 v1.5 padding instead.</t>
-         <t>(describe the Marvin workaround/implicit rejection in terms of
-            PKCS #1 v1.5)</t>
+            <t>To implement implicit rejection, the
+             RSAES-PKCS1-V1_5-DECRYPT from section 7.2.2 of RFC 8017 needs
+             to be implemented as follows:</t>
+        <list style="numbers">
+            <t>Length checking: If the length of the ciphertext C is not k
+                octets (or if k &lt; 11), output "decryption error" and stop.</t>
+            <t>RSA decryption:
+               <list style="letters">
+                   <t>Convert the ciphertext C to an integer ciphertext
+                  representative c:
+                   <figure><artwork>
+  c = OS2IP (C).
+                   </artwork></figure>
+                   </t>
+                   <t>Apply the RSADP decryption primitive to
+              the RSA private key (n, d) and the ciphertext
+              representative c to produce an integer message
+                   representative m:
+                   <figure><artwork>
+  m = RSADP ((n, d), c).
+                   </artwork></figure>
+                   Note: the RSADP MUST be constant-time with respect of
+                   message m.<vspace/>
+                   If RSADP outputs "ciphertext representative out of range"
+                   (meaning that c >= n), output "decryption error" and stop.
+                   </t>
+                   <t>Convert the message representative m to an encoded message
+                   EM of length k octets:
+                   <figure><artwork>
+  EM = I2OSP (m, k).
+                   </artwork></figure>
+                   Note: I2OSP MUST be constant-time with respect of m.
+                   </t>
+               </list>
+           </t>
+           <t>Derivation of alternative message
+              <list style="numbers">
+                <t>Derive the Key Derivation Key (KDK)
+                <list style="letters">
+                    <t>Convert the private expoent d to a string of length
+                       k octets:
+                      <figure><artwork>
+  D = I2OSP (d, k).
+                      </artwork></figure>
+                    </t>
+                    <t>Hash the private exponent using the SHA-256 algorithm:
+                      <figure><artwork>
+  DH = SHA256 (D).
+                      </artwork></figure>
+                      Note: This value MAY be cached between the decryption
+                      operations, but MUST be considered private-key
+                      equivalent.
+                  </t>
+                  <t>Use the DH as the SHA-256 HMAC key and the provided
+                  ciphertext C as the message. If the ciphertext C is not
+                  k octets long, it MUST be left padded with octets of value
+                  zero.
+                      <figure><artwork>
+  KDK = HMAC (DH, C, SHA256).
+                      </artwork></figure>
+                  </t>
+                  </list>
+              </t>
+              <t>Create the candidate lengths and the random message
+              <list style="letters">
+                  <t>Use the IRPRF with key KDK, "length" as six octet label
+                  encoded with UTF-8, to generate 256 octet output.
+                  Interpret this output as 128 two octet long big-endian
+                  numbers.
+                  <figure><artwork>
+  L = IRPRF (KDK, "length", 256).
+                  </artwork></figure>
+                 </t>
+                 <t>Use the IRPRF with key KDK, "message" as a seven octet
+                 label encoded with UTF-8 to generate k octet long output
+                 to be used as the alternative message:
+                 <figure><artwork>
+  AM = IRPRF (KDK, "message", k).
+                 </artwork></figure>
+                 </t>
+              </list>
+              </t>
+              <t>Select the alternative length for the alternative message.
+              <vspace/>
+              Note: this must be performed in side-channel free way.
+              <list style="letters">
+                  <t>Iterate over the 128 candidate L lengths. For each
+                  zero out high order bits so that they have the same bit
+                      length as the maximum valid message size (k - 11).</t>
+                  <t>Select the last length that's not larger than k - 11,
+                     use 0 if none are. Save it as AL.</t>
+              </list>
+              </t>
+              </list>
+           </t>
+           <t>EME-PKCS1-v1_5 decoding: Separate the encoded message EM into
+          an octet string PS consisting of nonzero octets and a message
+           M as
+             <figure><artwork>
+  EM = 0x00 || 0x02 || PS || 0x00 || M.
+             </artwork></figure>
+             If the first octet of EM does not have hexadecimal value 0x00,
+          if the second octet of EM does not have hexadecimal value
+          0x02, if there is no octet with hexadecimal value 0x00 to
+          separate PS from M, or if the length of PS is less than 8
+             octets, the check variable must remember if any of those checks
+             failed. Irrespective of the check variable value, the code should
+             also return length of message M: L. If there is no octet with
+             hexadecimal value 0x00 to separate PS from M, then L should equal
+             0.
+             <vspace/>
+             Note: All those checks MUST be performed irrespective if previous
+             checks failed or not. A common technique for that is to have
+             a check variable that is OR-ed with the results of subsequent
+             checks.
+         </t>
+             <t>Decision which message to return: in case the check variable
+             is set, the code should return the last AL octets of AM,
+             in case the check variable is unset the code should return
+             the last L octets of EM.
+             <vspace/>
+             Note: The decision which length to use MUST be performed in
+             side-channel free manner. While the length of the returned
+             message is not considered sensitive, the read memory location is.
+             As such, when returning message M both EM and AM
+             memory locations MUST be read.</t>
+        </list>
         </section>
     </section>
 
