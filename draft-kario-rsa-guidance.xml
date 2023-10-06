@@ -129,14 +129,21 @@
            power usage, electromagnetic emanations, or sounds and
            correlate them with specific bits of secret information.
        </t>
+       <t>Recent research into network based side channel detection has shown
+          that even very small side channels (of just few clock cycles) can
+          be reliably detected over the network. The detectability depends
+          on the sample size the attacker is able to collect, not on size
+          of the side-channel.
+       </t>
     </section>
 
     <section title="General recommendations">
         <t>As a general rule, all operations that process secret information
           (be it parts of the private key or parts of encrypted message)
-          SHOULD be performed with code that doesn't have secret data dependent
+          MUST be performed with code that doesn't have secret data dependent
           branch instructions, secret data dependent memory accesses, or
-          uses non-constant time machine instructions (architecture dependant,
+        uses non-constant time machine instructions (which ones are those
+        if architecture dependant,
           but division is commonly non-constant time).
         </t>
         <t>Special care should be placed around the code that handles
@@ -157,17 +164,17 @@
            exponentiation.</t>
        <t>In case the Chinese remainder theorem optimisation is used the
         modular exponentiation algorithm must also be constant time
-           with regards to the used modulus.</t>
+           with regards to the used moduli.</t>
         <section title="General recommendations">
             <t>It's especially important to make sure that all values that
             are secret to the attacker are stored in memory buffers that
-                have sizes determined by public values.</t>
+                have sizes determined by the public modulus.</t>
             <t>For example, the private exponenents should be stored in
                 memory buffers that have sizes determined by the public
                 modulus value, not the numerical values of the exponents
                 themselves.</t>
             <t>Similarly, the size of the output buffer for multiplication
-            should always be equal to the combined size of multiplicands.
+            should always be equal to the sum of buffer sizes of multiplicands.
             The output size of the modular reduction operation should
             similarly be equal to the size of the modulus and not depend
                 on bit size of the output.</t>
@@ -184,7 +191,7 @@
         <t>While that approach ensures that both the square and multiply
         operations are performed, the fact that the results of them are
         placed in different memory locations based on bits of the secret
-        exponent. That will provide enough information for an attacker
+        exponent will provide enough information for an attacker
             to recover the bits of the exponent. To counteract it,
         the implementation should ensure that both memory locations
         are accessed and updated on every step.
@@ -215,7 +222,9 @@
             code that does not leak information about the result of this
             multiplication and reduction modulo operation.</t>
         <t>(describe the base blinding use)</t>
-        <t>It's RECOMMENDED to generate a completely new blinding parameters
+        <t>Unless the multiplication and reduction modulo operations are
+           verified to be side-channel free, it's RECOMMENDED to generate a
+           completely new blinding parameters
             every few hundred private key operations.</t>
     </section>
 
@@ -227,7 +236,7 @@
 
     <section title="Depadding">
         <t>In case of RSA-OAEP, the padding is self-verifying, thus the
-            depadding operation needs follow the standard algorithm
+            depadding operation needs to follow the standard algorithm
             to provide a safe API to users.</t>
         <t>It MUST ignore the value of the very fist octet of padding and
             process the remaining bytes as if it was equal zero.</t>
@@ -246,10 +255,10 @@
     </section>
 
     <section title="Deprecated Algorithms">
-        <t>Current protocols deployments SHOULD NOT use
+        <t>Current protocols deployments MUST NOT use
             encryption with RSA PKCS #1 v1.5 padding.
             Support for RSA PKCS #1 v1.5 SHOULD be disabled in default
-            configuration.
+            configuration of any implementation of RSA cryptosystem.
             All new protocols MUST NOT specify PKCS #1 v1.5 as a valid
             encryption padding for RSA keys.</t>
     </section>
