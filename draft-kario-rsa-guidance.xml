@@ -269,6 +269,24 @@
         <t>The PKCS #1 v1.5 padding is considered deprecated, and should be
         used only to process legacy data. It MUST NOT be used as part
             of online protocols or API endpoints.</t>
+        <t>For implementations that can't remove support for this padding
+            mode it's RECOMMENDED to implement an implicit rejection mechanism
+            that completely
+            hides from the calling code whether the padding check
+            failed or not.</t>
+        <t>It should be noted that the algorithm MUST be implemented
+            as stated, otherwise in case of heteregonous environments
+            where two implementations use the same key but implement the
+            implicit rejection differently, it may be possible for the
+            attacker to compare behaviour between the implementations to
+            guess if the padding check failed or not.</t>
+        <t>The basic idea of the implicit rejection is to prepare a random
+            but deterministic message to be returned in case the standard
+        PKCS #1 v1.5 padding checks fail. To do that, use the private
+        key and the provided ciphertext to derive a static, but unknown to
+        the attacker, random value. It's a combination of the method
+        documented in the TLS 1.2 (RFC 5246) and the deterministic (EC)DSA
+            signatures (RFC 6979).</t>
         <section title="IRPRF">
             <t>For the calculation of the random message for implicit
             rejection we define a Pseudo-Random Function (PRF) as follows:</t>
