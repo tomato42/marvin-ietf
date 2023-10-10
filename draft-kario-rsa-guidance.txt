@@ -82,17 +82,17 @@ Table of Contents
    8.  Base blinding . . . . . . . . . . . . . . . . . . . . . . . .   6
    9.  Exponent blinding . . . . . . . . . . . . . . . . . . . . . .   6
    10. Depadding . . . . . . . . . . . . . . . . . . . . . . . . . .   6
-     10.1.  IRPRF  . . . . . . . . . . . . . . . . . . . . . . . . .   6
-     10.2.  Implicit rejection . . . . . . . . . . . . . . . . . . .   7
+     10.1.  IRPRF  . . . . . . . . . . . . . . . . . . . . . . . . .   7
+     10.2.  Implicit rejection . . . . . . . . . . . . . . . . . . .   8
    11. Deprecated Algorithms . . . . . . . . . . . . . . . . . . . .  10
    12. IANA Considerations . . . . . . . . . . . . . . . . . . . . .  10
    13. Security Considerations . . . . . . . . . . . . . . . . . . .  10
    14. References  . . . . . . . . . . . . . . . . . . . . . . . . .  10
      14.1.  Normative References . . . . . . . . . . . . . . . . . .  10
-     14.2.  Informative References . . . . . . . . . . . . . . . . .  10
-   Appendix A.  Test Vectors . . . . . . . . . . . . . . . . . . . .  10
-     A.1.  2048 bit key  . . . . . . . . . . . . . . . . . . . . . .  10
-   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  10
+     14.2.  Informative References . . . . . . . . . . . . . . . . .  11
+   Appendix A.  Test Vectors . . . . . . . . . . . . . . . . . . . .  11
+     A.1.  2048 bit key  . . . . . . . . . . . . . . . . . . . . . .  11
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  11
 
 1.  Introduction
 
@@ -319,6 +319,32 @@ Internet-Draft         RSA Implementation Guidance          October 2023
    only to process legacy data.  It MUST NOT be used as part of online
    protocols or API endpoints.
 
+   For implementations that can't remove support for this padding mode
+   it's RECOMMENDED to implement an implicit rejection mechanism that
+   completely hides from the calling code whether the padding check
+   failed or not.
+
+   It should be noted that the algorithm MUST be implemented as stated,
+   otherwise in case of heteregonous environments where two
+   implementations use the same key but implement the implicit rejection
+   differently, it may be possible for the attacker to compare behaviour
+   between the implementations to guess if the padding check failed or
+   not.
+
+
+
+Kario                     Expires 11 April 2024                 [Page 6]
+
+Internet-Draft         RSA Implementation Guidance          October 2023
+
+
+   The basic idea of the implicit rejection is to prepare a random but
+   deterministic message to be returned in case the standard PKCS #1
+   v1.5 padding checks fail.  To do that, use the private key and the
+   provided ciphertext to derive a static, but unknown to the attacker,
+   random value.  It's a combination of the method documented in the TLS
+   1.2 (RFC 5246) and the deterministic (EC)DSA signatures (RFC 6979).
+
 10.1.  IRPRF
 
    For the calculation of the random message for implicit rejection we
@@ -329,14 +355,6 @@ Internet-Draft         RSA Implementation Guidance          October 2023
    Input:
 
    KDK the key derivation key
-
-
-
-
-Kario                     Expires 11 April 2024                 [Page 6]
-
-Internet-Draft         RSA Implementation Guidance          October 2023
-
 
    label a label making the output unique for a given KDK
 
@@ -368,6 +386,14 @@ Internet-Draft         RSA Implementation Guidance          October 2023
    5.  The output is the length left-most octets of the concatenated
        HMAC output
 
+
+
+
+Kario                     Expires 11 April 2024                 [Page 7]
+
+Internet-Draft         RSA Implementation Guidance          October 2023
+
+
 10.2.  Implicit rejection
 
    For implementations that cannot remove support for the PKCS #1 v1.5
@@ -386,13 +412,6 @@ Internet-Draft         RSA Implementation Guidance          October 2023
 
        a.  Convert the ciphertext C to an integer ciphertext
            representative c:
-
-
-
-Kario                     Expires 11 April 2024                 [Page 7]
-
-Internet-Draft         RSA Implementation Guidance          October 2023
-
 
             c = OS2IP (C).
 
@@ -424,6 +443,13 @@ Internet-Draft         RSA Implementation Guidance          October 2023
 
                 D = I2OSP (d, k).
 
+
+
+Kario                     Expires 11 April 2024                 [Page 8]
+
+Internet-Draft         RSA Implementation Guidance          October 2023
+
+
            b.  Hash the private exponent using the SHA-256 algorithm:
 
                 DH = SHA256 (D).
@@ -440,15 +466,6 @@ Internet-Draft         RSA Implementation Guidance          October 2023
                 KDK = HMAC (DH, C, SHA256).
 
        2.  Create the candidate lengths and the random message
-
-
-
-
-
-Kario                     Expires 11 April 2024                 [Page 8]
-
-Internet-Draft         RSA Implementation Guidance          October 2023
-
 
            a.  Use the IRPRF with key KDK, "length" as six octet label
                encoded with UTF-8, to generate 256 octet output.
@@ -479,6 +496,16 @@ Internet-Draft         RSA Implementation Guidance          October 2023
 
         EM = 0x00 || 0x02 || PS || 0x00 || M.
 
+
+
+
+
+
+Kario                     Expires 11 April 2024                 [Page 9]
+
+Internet-Draft         RSA Implementation Guidance          October 2023
+
+
        If the first octet of EM does not have hexadecimal value 0x00, if
        the second octet of EM does not have hexadecimal value 0x02, if
        there is no octet with hexadecimal value 0x00 to separate PS from
@@ -498,13 +525,6 @@ Internet-Draft         RSA Implementation Guidance          October 2023
        set, the code should return the last AL octets of AM, in case the
        check variable is unset the code should return the last L octets
        of EM.
-
-
-
-Kario                     Expires 11 April 2024                 [Page 9]
-
-Internet-Draft         RSA Implementation Guidance          October 2023
-
 
        Note: The decision which length to use MUST be performed in side-
        channel free manner.  While the length of the returned message is
@@ -533,6 +553,15 @@ Internet-Draft         RSA Implementation Guidance          October 2023
 
 14.1.  Normative References
 
+
+
+
+
+Kario                     Expires 11 April 2024                [Page 10]
+
+Internet-Draft         RSA Implementation Guidance          October 2023
+
+
    [RFC8017]  Moriarty, K., Ed., Kaliski, B., Jonsson, J., and A. Rusch,
               "PKCS #1: RSA Cryptography Specifications Version 2.2",
               RFC 8017, DOI 10.17487/RFC8017, November 2016,
@@ -553,15 +582,6 @@ A.1.  2048 bit key
 
 Author's Address
 
-
-
-
-
-Kario                     Expires 11 April 2024                [Page 10]
-
-Internet-Draft         RSA Implementation Guidance          October 2023
-
-
    Hubert Kario (editor)
    Red Hat, Inc.
    Purkynova 115
@@ -569,26 +589,6 @@ Internet-Draft         RSA Implementation Guidance          October 2023
    Czech Republic
 
    Email: hkario@redhat.com
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
