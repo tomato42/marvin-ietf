@@ -131,6 +131,10 @@
 
             <dt>l</dt>
             <dd><t>length in octets of the message M</t></dd>
+
+            <dt>b_i</dt>
+            <dd><t>an exponent blinding factor for i-th prime,
+                non-negative integer.</t></dd>
         </dl>
     </section>
 
@@ -257,7 +261,28 @@
     <section title="Exponent blinding">
         <t>To further protect against private key leaks, it's RECOMMENDED
             to perform the blinding of the used exponents.</t>
-        <t>«describe the exponent blinding algorithm here»</t>
+        <t>When performing the RSADP() operation, the blinding depends on the
+            form of the private key.</t>
+        <t>If the key is in the first form, the pair (n, d), then the
+            exponent d should be modified by adding a multiplie of Euler
+            phi(n): m = c^(d + b*phi(n)) mod n. Where r is a 64 bit long
+            uniform random number.</t>
+        <t>If the key is the the second form, the quintuple (p, q, dP, dQ,
+            qInv) with optional sequence of triplets (r_i, d_i, t_i), i = 3, ...,
+            u, then each exponent used MUST be blinded individually.</t>
+        <list style="numbers">
+            <t>The m_1 = c^(dP + b_1 * phi(p)) mod p</t>
+            <t>The m_2 = c^(dQ + b_2 * phi(q)) mod q</t>
+            <t>If u > 3, then m_i = c^(d_i + b_i * phi(r_i)) mod (r_i)</t>
+        </list>
+        <t>Where b_1, b_2, ..., b_i are all uniformely selected random numbers
+            at least 64 bits long (or at least 2 machine word sizes, whichever
+            is greater).</t>
+        <t>As Euler phi(p) for an argument p that's a prime is equal p - 1,
+            it's simple to calculate in this case.</t>
+        <t>Note: the selection of random b_i values, multiplication of them
+            by the result of phi() function, and addition to the exponent
+            MUST be performed with side-channel free free code.</t>
     </section>
 
     <section title="Depadding">

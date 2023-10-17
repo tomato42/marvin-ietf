@@ -81,18 +81,18 @@ Table of Contents
      7.3.  Montgomery reduction in multiplication  . . . . . . . . .   5
    8.  Base blinding . . . . . . . . . . . . . . . . . . . . . . . .   6
    9.  Exponent blinding . . . . . . . . . . . . . . . . . . . . . .   6
-   10. Depadding . . . . . . . . . . . . . . . . . . . . . . . . . .   6
+   10. Depadding . . . . . . . . . . . . . . . . . . . . . . . . . .   7
      10.1.  IRPRF  . . . . . . . . . . . . . . . . . . . . . . . . .   7
      10.2.  Implicit rejection . . . . . . . . . . . . . . . . . . .   8
-   11. Deprecated Algorithms . . . . . . . . . . . . . . . . . . . .  10
-   12. IANA Considerations . . . . . . . . . . . . . . . . . . . . .  10
-   13. Security Considerations . . . . . . . . . . . . . . . . . . .  10
-   14. References  . . . . . . . . . . . . . . . . . . . . . . . . .  10
-     14.1.  Normative References . . . . . . . . . . . . . . . . . .  10
+   11. Deprecated Algorithms . . . . . . . . . . . . . . . . . . . .  11
+   12. IANA Considerations . . . . . . . . . . . . . . . . . . . . .  11
+   13. Security Considerations . . . . . . . . . . . . . . . . . . .  11
+   14. References  . . . . . . . . . . . . . . . . . . . . . . . . .  11
+     14.1.  Normative References . . . . . . . . . . . . . . . . . .  11
      14.2.  Informative References . . . . . . . . . . . . . . . . .  11
    Appendix A.  Test Vectors . . . . . . . . . . . . . . . . . . . .  11
-     A.1.  2048 bit key  . . . . . . . . . . . . . . . . . . . . . .  11
-   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  11
+     A.1.  2048 bit key  . . . . . . . . . . . . . . . . . . . . . .  12
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  12
 
 1.  Introduction
 
@@ -152,6 +152,9 @@ Internet-Draft         RSA Implementation Guidance          October 2023
 
    l  length in octets of the message M
 
+   b_i  an exponent blinding factor for i-th prime, non-negative
+      integer.
+
 5.  Side channel attacks
 
    Cryptographic implementations may provide a lot of indirect signals
@@ -160,15 +163,14 @@ Internet-Draft         RSA Implementation Guidance          October 2023
    decrypt data or retrieve private keys.  Most common side-channels
    that leak information about secret data are:
 
-   1.  Different errors returned
-
-
 
 
 Kario                     Expires 11 April 2024                 [Page 3]
 
 Internet-Draft         RSA Implementation Guidance          October 2023
 
+
+   1.  Different errors returned
 
    2.  Different processing times of operations
 
@@ -214,9 +216,7 @@ Internet-Draft         RSA Implementation Guidance          October 2023
    For private key decryption the modular exponentiation algorithm MUST
    be constant time with regards to the output of the exponentiation.
 
-   In case the Chinese remainder theorem optimisation is used the
-   modular exponentiation algorithm must also be constant time with
-   regards to the used moduli.
+
 
 
 
@@ -225,6 +225,10 @@ Kario                     Expires 11 April 2024                 [Page 4]
 
 Internet-Draft         RSA Implementation Guidance          October 2023
 
+
+   In case the Chinese remainder theorem optimisation is used the
+   modular exponentiation algorithm must also be constant time with
+   regards to the used moduli.
 
 7.1.  General recommendations
 
@@ -270,10 +274,6 @@ Internet-Draft         RSA Implementation Guidance          October 2023
    To further optimise the modular reduction, the Montgomery modular
    multiplication is used for performing the combined multiply-and-
    reduce operation.  The last step of that operation is conditional on
-   the value of the output.  A side-channel free implementation should
-   perfom the subtraction in all cases and then copy the result or the
-   first operand of the subtraction based on sign of the result of the
-   subtraction.
 
 
 
@@ -281,6 +281,11 @@ Kario                     Expires 11 April 2024                 [Page 5]
 
 Internet-Draft         RSA Implementation Guidance          October 2023
 
+
+   the value of the output.  A side-channel free implementation should
+   perfom the subtraction in all cases and then copy the result or the
+   first operand of the subtraction based on sign of the result of the
+   subtraction.
 
 8.  Base blinding
 
@@ -304,7 +309,41 @@ Internet-Draft         RSA Implementation Guidance          October 2023
    To further protect against private key leaks, it's RECOMMENDED to
    perform the blinding of the used exponents.
 
-   <<describe the exponent blinding algorithm here>>
+   When performing the RSADP() operation, the blinding depends on the
+   form of the private key.
+
+   If the key is in the first form, the pair (n, d), then the exponent d
+   should be modified by adding a multiplie of Euler phi(n): m = c^(d +
+   b*phi(n)) mod n.  Where r is a 64 bit long uniform random number.
+
+   If the key is the the second form, the quintuple (p, q, dP, dQ, qInv)
+   with optional sequence of triplets (r_i, d_i, t_i), i = 3, ..., u,
+   then each exponent used MUST be blinded individually.
+
+   1.  The m_1 = c^(dP + b_1 * phi(p)) mod p
+
+   2.  The m_2 = c^(dQ + b_2 * phi(q)) mod q
+
+   3.  If u > 3, then m_i = c^(d_i + b_i * phi(r_i)) mod (r_i)
+
+   Where b_1, b_2, ..., b_i are all uniformely selected random numbers
+   at least 64 bits long (or at least 2 machine word sizes, whichever is
+   greater).
+
+
+
+
+Kario                     Expires 11 April 2024                 [Page 6]
+
+Internet-Draft         RSA Implementation Guidance          October 2023
+
+
+   As Euler phi(p) for an argument p that's a prime is equal p - 1, it's
+   simple to calculate in this case.
+
+   Note: the selection of random b_i values, multiplication of them by
+   the result of phi() function, and addition to the exponent MUST be
+   performed with side-channel free free code.
 
 10.  Depadding
 
@@ -331,13 +370,6 @@ Internet-Draft         RSA Implementation Guidance          October 2023
    between the implementations to guess if the padding check failed or
    not.
 
-
-
-Kario                     Expires 11 April 2024                 [Page 6]
-
-Internet-Draft         RSA Implementation Guidance          October 2023
-
-
    The basic idea of the implicit rejection is to prepare a random but
    deterministic message to be returned in case the standard PKCS #1
    v1.5 padding checks fail.  To do that, use the private key and the
@@ -353,6 +385,14 @@ Internet-Draft         RSA Implementation Guidance          October 2023
    IRPRF( KDK, label, length )
 
    Input:
+
+
+
+
+Kario                     Expires 11 April 2024                 [Page 7]
+
+Internet-Draft         RSA Implementation Guidance          October 2023
+
 
    KDK the key derivation key
 
@@ -386,14 +426,6 @@ Internet-Draft         RSA Implementation Guidance          October 2023
    5.  The output is the length left-most octets of the concatenated
        HMAC output
 
-
-
-
-Kario                     Expires 11 April 2024                 [Page 7]
-
-Internet-Draft         RSA Implementation Guidance          October 2023
-
-
 10.2.  Implicit rejection
 
    For implementations that cannot remove support for the PKCS #1 v1.5
@@ -409,6 +441,14 @@ Internet-Draft         RSA Implementation Guidance          October 2023
        octets (or if k < 11), output "decryption error" and stop.
 
    2.  RSA decryption:
+
+
+
+
+Kario                     Expires 11 April 2024                 [Page 8]
+
+Internet-Draft         RSA Implementation Guidance          October 2023
+
 
        a.  Convert the ciphertext C to an integer ciphertext
            representative c:
@@ -443,13 +483,6 @@ Internet-Draft         RSA Implementation Guidance          October 2023
 
                 D = I2OSP (d, k).
 
-
-
-Kario                     Expires 11 April 2024                 [Page 8]
-
-Internet-Draft         RSA Implementation Guidance          October 2023
-
-
            b.  Hash the private exponent using the SHA-256 algorithm:
 
                 DH = SHA256 (D).
@@ -464,6 +497,14 @@ Internet-Draft         RSA Implementation Guidance          October 2023
                value zero.
 
                 KDK = HMAC (DH, C, SHA256).
+
+
+
+
+Kario                     Expires 11 April 2024                 [Page 9]
+
+Internet-Draft         RSA Implementation Guidance          October 2023
+
 
        2.  Create the candidate lengths and the random message
 
@@ -496,16 +537,6 @@ Internet-Draft         RSA Implementation Guidance          October 2023
 
         EM = 0x00 || 0x02 || PS || 0x00 || M.
 
-
-
-
-
-
-Kario                     Expires 11 April 2024                 [Page 9]
-
-Internet-Draft         RSA Implementation Guidance          October 2023
-
-
        If the first octet of EM does not have hexadecimal value 0x00, if
        the second octet of EM does not have hexadecimal value 0x02, if
        there is no octet with hexadecimal value 0x00 to separate PS from
@@ -520,6 +551,16 @@ Internet-Draft         RSA Implementation Guidance          October 2023
        checks failed or not.  A common technique for that is to have a
        check variable that is OR-ed with the results of subsequent
        checks.
+
+
+
+
+
+
+Kario                     Expires 11 April 2024                [Page 10]
+
+Internet-Draft         RSA Implementation Guidance          October 2023
+
 
    5.  Decision which message to return: in case the check variable is
        set, the code should return the last AL octets of AM, in case the
@@ -553,15 +594,6 @@ Internet-Draft         RSA Implementation Guidance          October 2023
 
 14.1.  Normative References
 
-
-
-
-
-Kario                     Expires 11 April 2024                [Page 10]
-
-Internet-Draft         RSA Implementation Guidance          October 2023
-
-
    [RFC8017]  Moriarty, K., Ed., Kaliski, B., Jonsson, J., and A. Rusch,
               "PKCS #1: RSA Cryptography Specifications Version 2.2",
               RFC 8017, DOI 10.17487/RFC8017, November 2016,
@@ -575,6 +607,16 @@ Internet-Draft         RSA Implementation Guidance          October 2023
               <https://www.rfc-editor.org/info/rfc2119>.
 
 Appendix A.  Test Vectors
+
+
+
+
+
+
+Kario                     Expires 11 April 2024                [Page 11]
+
+Internet-Draft         RSA Implementation Guidance          October 2023
+
 
 A.1.  2048 bit key
 
@@ -613,4 +655,18 @@ Author's Address
 
 
 
-Kario                     Expires 11 April 2024                [Page 11]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Kario                     Expires 11 April 2024                [Page 12]
