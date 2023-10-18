@@ -298,7 +298,7 @@ Internet-Draft         RSA Implementation Guidance          October 2023
 
 8.  Base blinding
 
-   As protection against multiple attacks, it's RECOMMENDED to perform
+   As a protection against multiple attacks, it's RECOMMENDED to perform
    all operations involving the private key with the use of blinding
    [Kocher96].
 
@@ -307,7 +307,7 @@ Internet-Draft         RSA Implementation Guidance          October 2023
    not leak information about the result of this multiplication and
    reduction modulo operation.
 
-   To implement base blinding, select a number bb uniformely at random
+   To implement base blinding, select a number bb uniformly at random
    such that it is relatively prime to n and smaller than n.
 
    Compute multiplicative inverse of bb modulo n.
@@ -339,7 +339,7 @@ Internet-Draft         RSA Implementation Guidance          October 2023
 
 
    Unless the multiplication (squaring) and reduction modulo operations
-   are verified to be side-channel free, it's RECOMMENDED to generate a
+   are verified to be side-channel free, it's RECOMMENDED to generate
    completely new blinding parameters every few hundred private key
    operations.
 
@@ -352,10 +352,10 @@ Internet-Draft         RSA Implementation Guidance          October 2023
    form of the private key.
 
    If the key is in the first form, the pair (n, d), then the exponent d
-   should be modified by adding a multiplie of Euler phi(n): m = c^(d +
+   should be modified by adding a multiple of Euler phi(n): m = c^(d +
    b*phi(n)) mod n.  Where r is a 64 bit long uniform random number.
 
-   If the key is the the second form, the quintuple (p, q, dP, dQ, qInv)
+   If the key is the second form, the quintuple (p, q, dP, dQ, qInv)
    with optional sequence of triplets (r_i, d_i, t_i), i = 3, ..., u,
    then each exponent used MUST be blinded individually.
 
@@ -365,8 +365,8 @@ Internet-Draft         RSA Implementation Guidance          October 2023
 
    3.  If u > 3, then m_i = c^(d_i + b_i * phi(r_i)) mod (r_i)
 
-   Where b_1, b_2, ..., b_i are all uniformely selected random numbers
-   at least 64 bits long (or at least 2 machine word sizes, whichever is
+   Where b_1, b_2, ..., b_i are all uniformly selected random numbers at
+   least 64 bits long (or at least 2 machine word sizes, whichever is
    greater).
 
    As Euler phi(p) for an argument p that's a prime is equal p - 1, it's
@@ -374,7 +374,7 @@ Internet-Draft         RSA Implementation Guidance          October 2023
 
    Note: the selection of random b_i values, multiplication of them by
    the result of phi() function, and addition to the exponent MUST be
-   performed with side-channel free free code.
+   performed with side-channel free code.
 
    Use of smaller blinding factor is NOT RECOMMENDED, as values shorter
    than 64 bits have been shown to still be vulnerable to side-channel
