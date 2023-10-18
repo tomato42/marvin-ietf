@@ -121,6 +121,15 @@
             <dt>AM</dt>
             <dd><t>alternative encoded message, an octet string</t></dd>
 
+            <dt>bb</dt>
+            <dd><t>base blinding factor, a positive integer</t></dd>
+
+            <dt>bbInv</dt>
+            <dd><t>base un-blinding factor, a positive integer,
+              <figure><artwork>
+  bbInv = bb^(-1) mod n
+              </artwork></figure></t></dd>
+
             <dt>D</dt>
             <dd><t>octet string representation of d</t></dd>
 
@@ -253,8 +262,30 @@
             unblinding operation MUST be performed using side-channel free
             code that does not leak information about the result of this
             multiplication and reduction modulo operation.</t>
-        <t>«describe the base blinding use»</t>
-        <t>Unless the multiplication and reduction modulo operations are
+        <t>To implement base blinding, select a number bb uniformely at random
+            such that it is relatively prime to n and smaller than n.</t>
+        <t>Compute multiplicative inverse of bb modulo n.
+            <figure><artwork>
+  bbInv = bb^(-1) mod n
+                    </artwork></figure></t>
+        <t>In the RSADP() operation, after performing step 1, multiply c
+            by bb mod n. Use the result as new c for all the remaining
+            operations.</t>
+        <t>Before returning the value m in step 3, multiply it by bbInv mod n.
+    </t>
+        <t>Note: multiplication by bbInv and reduction modulo n MUST be
+            performed using side-channel free code with respect to
+            value m.</t>
+        <t>As calculating multiplicative inverse is expensive, implementations
+        MAY calculate new values of bb and bbInv by squaring them:
+        <figure><artwork>
+  new bb = bb^2 mod n
+  new bbInv = bbInv^2 mod n
+            </artwork></figure></t>
+        <t>A given pair of blinding factors (bb, bbInv) MUST NOT be used for
+           more than one RSADP() operation.</t>
+        <t>Unless the multiplication (squaring) and reduction modulo operations
+            are
            verified to be side-channel free, it's RECOMMENDED to generate a
            completely new blinding parameters
             every few hundred private key operations.</t>
