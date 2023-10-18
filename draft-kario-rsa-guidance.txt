@@ -4,9 +4,9 @@
 
 Internet Engineering Task Force                            H. Kario, Ed.
 Internet-Draft                                             Red Hat, Inc.
-Updates: 8017 (if approved)                               9 October 2023
+Updates: 8017 (if approved)                              18 October 2023
 Intended status: Informational                                          
-Expires: 11 April 2024
+Expires: 20 April 2024
 
 
  Implementation Guidance for the PKCS #1 RSA Cryptography Specification
@@ -37,7 +37,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 11 April 2024.
+   This Internet-Draft will expire on 20 April 2024.
 
 Copyright Notice
 
@@ -53,7 +53,7 @@ Copyright Notice
 
 
 
-Kario                     Expires 11 April 2024                 [Page 1]
+Kario                     Expires 20 April 2024                 [Page 1]
 
 Internet-Draft         RSA Implementation Guidance          October 2023
 
@@ -90,7 +90,7 @@ Table of Contents
    14. References  . . . . . . . . . . . . . . . . . . . . . . . . .  11
      14.1.  Normative References . . . . . . . . . . . . . . . . . .  11
      14.2.  Informative References . . . . . . . . . . . . . . . . .  11
-   Appendix A.  Test Vectors . . . . . . . . . . . . . . . . . . . .  11
+   Appendix A.  Test Vectors . . . . . . . . . . . . . . . . . . . .  12
      A.1.  2048 bit key  . . . . . . . . . . . . . . . . . . . . . .  12
    Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  12
 
@@ -109,7 +109,7 @@ Table of Contents
 
 
 
-Kario                     Expires 11 April 2024                 [Page 2]
+Kario                     Expires 20 April 2024                 [Page 2]
 
 Internet-Draft         RSA Implementation Guidance          October 2023
 
@@ -165,7 +165,7 @@ Internet-Draft         RSA Implementation Guidance          October 2023
 
 
 
-Kario                     Expires 11 April 2024                 [Page 3]
+Kario                     Expires 20 April 2024                 [Page 3]
 
 Internet-Draft         RSA Implementation Guidance          October 2023
 
@@ -221,7 +221,7 @@ Internet-Draft         RSA Implementation Guidance          October 2023
 
 
 
-Kario                     Expires 11 April 2024                 [Page 4]
+Kario                     Expires 20 April 2024                 [Page 4]
 
 Internet-Draft         RSA Implementation Guidance          October 2023
 
@@ -277,7 +277,7 @@ Internet-Draft         RSA Implementation Guidance          October 2023
 
 
 
-Kario                     Expires 11 April 2024                 [Page 5]
+Kario                     Expires 20 April 2024                 [Page 5]
 
 Internet-Draft         RSA Implementation Guidance          October 2023
 
@@ -290,7 +290,8 @@ Internet-Draft         RSA Implementation Guidance          October 2023
 8.  Base blinding
 
    As protection against multiple attacks, it's RECOMMENDED to perform
-   all operations involving the private key with the use of blinding.
+   all operations involving the private key with the use of blinding
+   [Kocher96].
 
    It should be noted that for decryption operations the unblinding
    operation MUST be performed using side-channel free code that does
@@ -307,7 +308,7 @@ Internet-Draft         RSA Implementation Guidance          October 2023
 9.  Exponent blinding
 
    To further protect against private key leaks, it's RECOMMENDED to
-   perform the blinding of the used exponents.
+   perform the blinding of the used exponents [Kocher96].
 
    When performing the RSADP() operation, the blinding depends on the
    form of the private key.
@@ -332,8 +333,7 @@ Internet-Draft         RSA Implementation Guidance          October 2023
 
 
 
-
-Kario                     Expires 11 April 2024                 [Page 6]
+Kario                     Expires 20 April 2024                 [Page 6]
 
 Internet-Draft         RSA Implementation Guidance          October 2023
 
@@ -344,6 +344,10 @@ Internet-Draft         RSA Implementation Guidance          October 2023
    Note: the selection of random b_i values, multiplication of them by
    the result of phi() function, and addition to the exponent MUST be
    performed with side-channel free free code.
+
+   Use of smaller blinding factor is NOT RECOMMENDED, as values shorter
+   than 64 bits have been shown to still be vulnerable to side-channel
+   attacks[Bauer12][Schindler11]
 
 10.  Depadding
 
@@ -375,24 +379,24 @@ Internet-Draft         RSA Implementation Guidance          October 2023
    v1.5 padding checks fail.  To do that, use the private key and the
    provided ciphertext to derive a static, but unknown to the attacker,
    random value.  It's a combination of the method documented in the TLS
-   1.2 (RFC 5246) and the deterministic (EC)DSA signatures (RFC 6979).
+   1.2 (RFC 5246[RFC5246]) and the deterministic (EC)DSA signatures (RFC
+   6979 [RFC6979]).
 
 10.1.  IRPRF
 
    For the calculation of the random message for implicit rejection we
    define a Pseudo-Random Function (PRF) as follows:
 
-   IRPRF( KDK, label, length )
-
-   Input:
 
 
-
-
-Kario                     Expires 11 April 2024                 [Page 7]
+Kario                     Expires 20 April 2024                 [Page 7]
 
 Internet-Draft         RSA Implementation Guidance          October 2023
 
+
+   IRPRF( KDK, label, length )
+
+   Input:
 
    KDK the key derivation key
 
@@ -431,24 +435,25 @@ Internet-Draft         RSA Implementation Guidance          October 2023
    For implementations that cannot remove support for the PKCS #1 v1.5
    padding nor provide a usage-specific API, it's possible to implement
    an implicit rejection algorithm as a protection measure.  It should
-   be noted that implementing it is hard, thus it's RECOMMENDED instead
-   to disable support for PKCS #1 v1.5 padding instead.
+   be noted that implementing it correctly is hard, thus it's
+   RECOMMENDED instead to disable support for PKCS #1 v1.5 padding
+   instead.
 
    To implement implicit rejection, the RSAES-PKCS1-V1_5-DECRYPT from
    section 7.2.2 of RFC 8017 needs to be implemented as follows:
+
+
+
+
+Kario                     Expires 20 April 2024                 [Page 8]
+
+Internet-Draft         RSA Implementation Guidance          October 2023
+
 
    1.  Length checking: If the length of the ciphertext C is not k
        octets (or if k < 11), output "decryption error" and stop.
 
    2.  RSA decryption:
-
-
-
-
-Kario                     Expires 11 April 2024                 [Page 8]
-
-Internet-Draft         RSA Implementation Guidance          October 2023
-
 
        a.  Convert the ciphertext C to an integer ciphertext
            representative c:
@@ -491,20 +496,22 @@ Internet-Draft         RSA Implementation Guidance          October 2023
                operations, but MUST be considered private-key
                equivalent.
 
+
+
+
+
+
+Kario                     Expires 20 April 2024                 [Page 9]
+
+Internet-Draft         RSA Implementation Guidance          October 2023
+
+
            c.  Use the DH as the SHA-256 HMAC key and the provided
                ciphertext C as the message.  If the ciphertext C is not
                k octets long, it MUST be left padded with octets of
                value zero.
 
                 KDK = HMAC (DH, C, SHA256).
-
-
-
-
-Kario                     Expires 11 April 2024                 [Page 9]
-
-Internet-Draft         RSA Implementation Guidance          October 2023
-
 
        2.  Create the candidate lengths and the random message
 
@@ -547,20 +554,18 @@ Internet-Draft         RSA Implementation Guidance          October 2023
        hexadecimal value 0x00 to separate PS from M, then L should equal
        0.
 
+
+
+
+Kario                     Expires 20 April 2024                [Page 10]
+
+Internet-Draft         RSA Implementation Guidance          October 2023
+
+
        Note: All those checks MUST be performed irrespective if previous
        checks failed or not.  A common technique for that is to have a
        check variable that is OR-ed with the results of subsequent
        checks.
-
-
-
-
-
-
-Kario                     Expires 11 April 2024                [Page 10]
-
-Internet-Draft         RSA Implementation Guidance          October 2023
-
 
    5.  Decision which message to return: in case the check variable is
        set, the code should return the last AL octets of AM, in case the
@@ -601,22 +606,45 @@ Internet-Draft         RSA Implementation Guidance          October 2023
 
 14.2.  Informative References
 
+   [Bauer12]  Bauer, S., "Attacking Exponent Blinding in RSA without
+              CRT", Lecture Notes in Computer Science vol 7275, 2012,
+              <https://doi.org/10.1007/978-3-642-29912-4_7>.
+
+
+
+
+Kario                     Expires 20 April 2024                [Page 11]
+
+Internet-Draft         RSA Implementation Guidance          October 2023
+
+
+   [Kocher96] Kocher, P. C., "Timing Attacks on Implementations of
+              Diffie-Hellman, RSA, DSS, and Other Systems.", Lecture
+              Notes in Computer Science vol 1109, 1996,
+              <https://doi.org/10.1007/3-540-68697-5_9>.
+
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
               DOI 10.17487/RFC2119, March 1997,
               <https://www.rfc-editor.org/info/rfc2119>.
 
+   [RFC5246]  Dierks, T. and E. Rescorla, "The Transport Layer Security
+              (TLS) Protocol Version 1.2", RFC 5246,
+              DOI 10.17487/RFC5246, August 2008,
+              <https://www.rfc-editor.org/info/rfc5246>.
+
+   [RFC6979]  Pornin, T., "Deterministic Usage of the Digital Signature
+              Algorithm (DSA) and Elliptic Curve Digital Signature
+              Algorithm (ECDSA)", RFC 6979, DOI 10.17487/RFC6979, August
+              2013, <https://www.rfc-editor.org/info/rfc6979>.
+
+   [Schindler11]
+              Schindler, W. and K. Itoh, "Exponent Blinding Does Not
+              Always Lift (Partial) Spa Resistance to Higher-Level
+              Security", Lecture Notes in Computer Science vol 6715,
+              2011, <https://doi.org/10.1007/978-3-642-21554-4_5>.
+
 Appendix A.  Test Vectors
-
-
-
-
-
-
-Kario                     Expires 11 April 2024                [Page 11]
-
-Internet-Draft         RSA Implementation Guidance          October 2023
-
 
 A.1.  2048 bit key
 
@@ -641,32 +669,4 @@ Author's Address
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Kario                     Expires 11 April 2024                [Page 12]
+Kario                     Expires 20 April 2024                [Page 12]

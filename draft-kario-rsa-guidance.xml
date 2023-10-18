@@ -2,6 +2,8 @@
 <!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
 
 <!ENTITY RFC2119 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2119.xml">
+<!ENTITY RFC5246 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.5246.xml">
+<!ENTITY RFC6979 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6979.xml">
 <!ENTITY RFC8017 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8017.xml">
 
 ]>
@@ -50,7 +52,7 @@
       </address>
     </author>
 
-    <date day="9" month="October" year="2023" />
+    <date day="18" month="October" year="2023" />
 
     <area>General</area>
 
@@ -246,7 +248,7 @@
     <section title="Base blinding">
         <t>As protection against multiple attacks, it's RECOMMENDED to
             perform all operations involving the private key with the use
-            of blinding.</t>
+            of blinding <xref target="Kocher96"/>.</t>
         <t>It should be noted that for decryption operations the
             unblinding operation MUST be performed using side-channel free
             code that does not leak information about the result of this
@@ -260,7 +262,8 @@
 
     <section title="Exponent blinding">
         <t>To further protect against private key leaks, it's RECOMMENDED
-            to perform the blinding of the used exponents.</t>
+            to perform the blinding of the used exponents
+            <xref target="Kocher96"/>.</t>
         <t>When performing the RSADP() operation, the blinding depends on the
             form of the private key.</t>
         <t>If the key is in the first form, the pair (n, d), then the
@@ -283,6 +286,9 @@
         <t>Note: the selection of random b_i values, multiplication of them
             by the result of phi() function, and addition to the exponent
             MUST be performed with side-channel free free code.</t>
+        <t>Use of smaller blinding factor is NOT RECOMMENDED, as values shorter
+           than 64 bits have been shown to still be vulnerable to side-channel
+            attacks<xref target="Bauer12"/><xref target="Schindler11"/></t>
     </section>
 
     <section title="Depadding">
@@ -307,11 +313,12 @@
             guess if the padding check failed or not.</t>
         <t>The basic idea of the implicit rejection is to prepare a random
             but deterministic message to be returned in case the standard
-        PKCS #1 v1.5 padding checks fail. To do that, use the private
-        key and the provided ciphertext to derive a static, but unknown to
-        the attacker, random value. It's a combination of the method
-        documented in the TLS 1.2 (RFC 5246) and the deterministic (EC)DSA
-            signatures (RFC 6979).</t>
+            PKCS #1 v1.5 padding checks fail. To do that, use the private
+            key and the provided ciphertext to derive a static, but unknown to
+            the attacker, random value. It's a combination of the method
+            documented in the TLS 1.2 (RFC 5246<xref target="RFC5246"/>)
+            and the deterministic (EC)DSA signatures (RFC 6979
+            <xref target="RFC6979"/>).</t>
         <section title="IRPRF">
             <t>For the calculation of the random message for implicit
             rejection we define a Pseudo-Random Function (PRF) as follows:</t>
@@ -348,7 +355,8 @@
             v1.5 padding nor provide a usage-specific API,
             it's possible to implement an implicit rejection
              algorithm as a protection measure. It should be noted that
-             implementing it is hard, thus it's RECOMMENDED instead to
+            implementing it correctly is hard, thus it's RECOMMENDED instead
+            to
              disable support for PKCS #1 v1.5 padding instead.</t>
             <t>To implement implicit rejection, the
              RSAES-PKCS1-V1_5-DECRYPT from section 7.2.2 of RFC 8017 needs
@@ -517,6 +525,49 @@
     <references title="Informative References">
       &RFC2119;
 
+      &RFC5246;
+
+      &RFC6979;
+
+      <reference
+            anchor="Bauer12"
+            target="https://doi.org/10.1007/978-3-642-29912-4_7">
+        <front>
+            <title>Attacking Exponent Blinding in RSA without CRT</title>
+            <author fullname="Sven Bauer"/>
+            <date year="2012"/>
+          </front>
+          <seriesInfo
+              name="Lecture Notes in Computer Science"
+              value="vol 7275"/>
+      </reference>
+
+      <reference
+          anchor="Schindler11"
+          target="https://doi.org/10.1007/978-3-642-21554-4_5">
+        <front>
+            <title>Exponent Blinding Does Not Always Lift (Partial) Spa Resistance to Higher-Level Security</title>
+            <author fullname="Werner Schindler"/>
+            <author fullname="Kouichi Itoh"/>
+            <date year="2011"/>
+        </front>
+        <seriesInfo
+            name="Lecture Notes in Computer Science"
+            value="vol 6715"/>
+      </reference>
+
+      <reference
+          anchor="Kocher96"
+          target="https://doi.org/10.1007/3-540-68697-5_9">
+        <front>
+          <title>Timing Attacks on Implementations of Diffie-Hellman, RSA, DSS, and Other Systems.</title>
+          <author fullname="Paul C. Kocher"/>
+          <date year="1996"/>
+        </front>
+        <seriesInfo
+            name="Lecture Notes in Computer Science"
+            value="vol 1109"/>
+      </reference>
     </references>
 
     <section anchor="test-vectors" title="Test Vectors">
