@@ -153,7 +153,7 @@ Internet-Draft         RSA Implementation Guidance          October 2023
 
    DH  an octet string of a SHA-256 hash of D
 
-   KDK  an octet string containg a Key Derivation Key for a specific
+   KDK  an octet string containing a Key Derivation Key for a specific
       ciphertext C
 
    l  length in octets of the message M

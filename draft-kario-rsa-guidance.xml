@@ -137,7 +137,7 @@
             <dd><t>an octet string of a SHA-256 hash of D</t></dd>
 
             <dt>KDK</dt>
-            <dd><t>an octet string containg a Key Derivation Key for a
+            <dd><t>an octet string containing a Key Derivation Key for a
                 specific ciphertext C</t></dd>
 
             <dt>l</dt>
