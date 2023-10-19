@@ -205,7 +205,7 @@ Internet-Draft         RSA Implementation Guidance          October 2023
    it parts of the private key or parts of encrypted message) MUST be
    performed with code that doesn't have secret data dependent branch
    instructions, secret data dependent memory accesses, or uses non-
-   constant time machine instructions (which ones are those if
+   constant time machine instructions (which ones are those is
    architecture dependant, but division is commonly non-constant time).
 
    Special care should be placed around the code that handles the

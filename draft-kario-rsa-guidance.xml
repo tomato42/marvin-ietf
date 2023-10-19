@@ -184,7 +184,7 @@
           MUST be performed with code that doesn't have secret data dependent
           branch instructions, secret data dependent memory accesses, or
         uses non-constant time machine instructions (which ones are those
-        if architecture dependant,
+        is architecture dependant,
           but division is commonly non-constant time).
         </t>
         <t>Special care should be placed around the code that handles
