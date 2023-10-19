@@ -15,7 +15,7 @@ Expires: 20 April 2024
 Abstract
 
    This document specifies additions and amendments to RFC 8017.
-   Specifically, it provides guidence to implementers of the standard to
+   Specifically, it provides guidance to implementers of the standard to
    protect against side-channel attacks.  It also deprecates the PKCS #1
    v1.5 encryption padding, but provides an alternative depadding
    algorithm that protects against side-channel attacks raising from
@@ -244,9 +244,9 @@ Internet-Draft         RSA Implementation Guidance          October 2023
    secret to the attacker are stored in memory buffers that have sizes
    determined by the public modulus.
 
-   For example, the private exponenents should be stored in memory
-   buffers that have sizes determined by the public modulus value, not
-   the numerical values of the exponents themselves.
+   For example, the private exponents should be stored in memory buffers
+   that have sizes determined by the public modulus value, not the
+   numerical values of the exponents themselves.
 
    Similarly, the size of the output buffer for multiplication should
    always be equal to the sum of buffer sizes of multiplicands.  The

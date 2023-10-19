@@ -62,7 +62,7 @@
 
     <abstract>
         <t>This document specifies additions and amendments to
-        RFC 8017. Specifically, it provides guidence to implementers
+        RFC 8017. Specifically, it provides guidance to implementers
         of the standard to protect against side-channel attacks.
         It also deprecates the PKCS #1 v1.5 encryption padding, but
         provides an alternative depadding algorithm that protects against
@@ -210,7 +210,7 @@
             <t>It's especially important to make sure that all values that
             are secret to the attacker are stored in memory buffers that
                 have sizes determined by the public modulus.</t>
-            <t>For example, the private exponenents should be stored in
+            <t>For example, the private exponents should be stored in
                 memory buffers that have sizes determined by the public
                 modulus value, not the numerical values of the exponents
                 themselves.</t>
