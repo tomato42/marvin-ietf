@@ -84,12 +84,15 @@ Table of Contents
    10. Depadding . . . . . . . . . . . . . . . . . . . . . . . . . .   8
      10.1.  IRPRF  . . . . . . . . . . . . . . . . . . . . . . . . .   8
      10.2.  Implicit rejection . . . . . . . . . . . . . . . . . . .   9
-   11. Deprecated Algorithms . . . . . . . . . . . . . . . . . . . .  12
-   12. IANA Considerations . . . . . . . . . . . . . . . . . . . . .  12
-   13. Security Considerations . . . . . . . . . . . . . . . . . . .  12
-   14. References  . . . . . . . . . . . . . . . . . . . . . . . . .  12
-     14.1.  Normative References . . . . . . . . . . . . . . . . . .  12
-     14.2.  Informative References . . . . . . . . . . . . . . . . .  12
+   11. Non-fixes . . . . . . . . . . . . . . . . . . . . . . . . . .  12
+     11.1.  Random delays  . . . . . . . . . . . . . . . . . . . . .  12
+     11.2.  Returing random value from API . . . . . . . . . . . . .  12
+   12. Deprecated Algorithms . . . . . . . . . . . . . . . . . . . .  12
+   13. IANA Considerations . . . . . . . . . . . . . . . . . . . . .  12
+   14. Security Considerations . . . . . . . . . . . . . . . . . . .  12
+   15. References  . . . . . . . . . . . . . . . . . . . . . . . . .  12
+     15.1.  Normative References . . . . . . . . . . . . . . . . . .  12
+     15.2.  Informative References . . . . . . . . . . . . . . . . .  13
    Appendix A.  Test Vectors . . . . . . . . . . . . . . . . . . . .  13
      A.1.  2048 bit key  . . . . . . . . . . . . . . . . . . . . . .  13
    Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  13
@@ -103,9 +106,6 @@ Table of Contents
    Unfortunately, typical uses of RSA encryption schemes leave it
    vulnerable to side-channel attacks.  Protections against them are not
    documented there, and attacks are mentioned only in passing.
-
-
-
 
 
 
@@ -624,7 +624,23 @@ Internet-Draft         RSA Implementation Guidance          October 2023
        when returning message M both EM and AM memory locations MUST be
        read.
 
-11.  Deprecated Algorithms
+11.  Non-fixes
+
+   While there are infinite ways to implement those algorithms
+   incorrectly few common ideas to work-around side-channel attacks are
+   repeated.  We list few of them as examples of approaches that don't
+   work and thus MUST NOT be used.
+
+11.1.  Random delays
+
+   <<describe that adding random delays doesn't work>>
+
+11.2.  Returing random value from API
+
+   <<describe why returning a random message, even of user-specified
+   length is not a universal solution>>
+
+12.  Deprecated Algorithms
 
    Current protocol deployments MUST NOT use encryption with RSA PKCS #1
    v1.5 padding.  Support for RSA PKCS #1 v1.5 SHOULD be disabled in
@@ -632,25 +648,33 @@ Internet-Draft         RSA Implementation Guidance          October 2023
    new protocols MUST NOT specify PKCS #1 v1.5 as a valid encryption
    padding for RSA keys.
 
-12.  IANA Considerations
+13.  IANA Considerations
 
    This memo includes no request to IANA.
 
-13.  Security Considerations
+14.  Security Considerations
 
    This whole document specifies security considerations for RSA
    implementations.
 
-14.  References
+15.  References
 
-14.1.  Normative References
+15.1.  Normative References
 
    [RFC8017]  Moriarty, K., Ed., Kaliski, B., Jonsson, J., and A. Rusch,
               "PKCS #1: RSA Cryptography Specifications Version 2.2",
               RFC 8017, DOI 10.17487/RFC8017, November 2016,
               <https://www.rfc-editor.org/info/rfc8017>.
 
-14.2.  Informative References
+
+
+
+Kario                     Expires 20 April 2024                [Page 12]
+
+Internet-Draft         RSA Implementation Guidance          October 2023
+
+
+15.2.  Informative References
 
    [Bauer12]  Bauer, S., "Attacking Exponent Blinding in RSA without
               CRT", Lecture Notes in Computer Science vol 7275, 2012,
@@ -665,14 +689,6 @@ Internet-Draft         RSA Implementation Guidance          October 2023
               Requirement Levels", BCP 14, RFC 2119,
               DOI 10.17487/RFC2119, March 1997,
               <https://www.rfc-editor.org/info/rfc2119>.
-
-
-
-
-Kario                     Expires 20 April 2024                [Page 12]
-
-Internet-Draft         RSA Implementation Guidance          October 2023
-
 
    [RFC5246]  Dierks, T. and E. Rescorla, "The Transport Layer Security
               (TLS) Protocol Version 1.2", RFC 5246,
@@ -705,22 +721,6 @@ Author's Address
    Czech Republic
 
    Email: hkario@redhat.com
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
