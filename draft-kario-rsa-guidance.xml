@@ -523,7 +523,7 @@
     </section>
 
     <section title="Deprecated Algorithms">
-        <t>Current protocols deployments MUST NOT use
+        <t>Current protocol deployments MUST NOT use
             encryption with RSA PKCS #1 v1.5 padding.
             Support for RSA PKCS #1 v1.5 SHOULD be disabled in default
             configuration of any implementation of RSA cryptosystem.
