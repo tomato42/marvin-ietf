@@ -299,7 +299,7 @@
             form of the private key.</t>
         <t>If the key is in the first form, the pair (n, d), then the
             exponent d should be modified by adding a multiple of Euler
-            phi(n): m = c^(d + b*phi(n)) mod n. Where r is a 64 bit long
+            phi(n): m = c^(d + b*phi(n)) mod n. Where b is a 64 bit long
             uniform random number.</t>
         <t>If the key is the second form, the quintuple (p, q, dP, dQ,
             qInv) with optional sequence of triplets (r_i, d_i, t_i), i = 3, ...,
