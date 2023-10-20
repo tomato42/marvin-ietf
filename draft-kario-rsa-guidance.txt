@@ -81,7 +81,7 @@ Table of Contents
      7.3.  Montgomery reduction in multiplication  . . . . . . . . .   6
    8.  Base blinding . . . . . . . . . . . . . . . . . . . . . . . .   6
    9.  Exponent blinding . . . . . . . . . . . . . . . . . . . . . .   7
-   10. Depadding . . . . . . . . . . . . . . . . . . . . . . . . . .   7
+   10. Depadding . . . . . . . . . . . . . . . . . . . . . . . . . .   8
      10.1.  IRPRF  . . . . . . . . . . . . . . . . . . . . . . . . .   8
      10.2.  Implicit rejection . . . . . . . . . . . . . . . . . . .   9
    11. Deprecated Algorithms . . . . . . . . . . . . . . . . . . . .  12
@@ -353,7 +353,9 @@ Internet-Draft         RSA Implementation Guidance          October 2023
 
    If the key is in the first form, the pair (n, d), then the exponent d
    should be modified by adding a multiple of Euler phi(n): m = c^(d +
-   b*phi(n)) mod n.  Where r is a 64 bit long uniform random number.
+   b*phi(n)) mod n.  Where b is a 64 bit long uniform random number.
+
+   A new value b MUST be selected for every RSADP() operation.
 
    If the key is the second form, the quintuple (p, q, dP, dQ, qInv)
    with optional sequence of triplets (r_i, d_i, t_i), i = 3, ..., u,
@@ -378,13 +380,11 @@ Internet-Draft         RSA Implementation Guidance          October 2023
 
    Use of smaller blinding factor is NOT RECOMMENDED, as values shorter
    than 64 bits have been shown to still be vulnerable to side-channel
-   attacks[Bauer12][Schindler11]
+   attacks[Bauer12][Schindler11].
 
-10.  Depadding
+   The b_1, b_2, ..., b_i factors MUST NOT be reused for multiple
+   RSADP() operations.
 
-   In case of RSA-OAEP, the padding is self-verifying, thus the
-   depadding operation needs to follow the standard algorithm to provide
-   a safe API to users.
 
 
 
@@ -393,6 +393,12 @@ Kario                     Expires 20 April 2024                 [Page 7]
 
 Internet-Draft         RSA Implementation Guidance          October 2023
 
+
+10.  Depadding
+
+   In case of RSA-OAEP, the padding is self-verifying, thus the
+   depadding operation needs to follow the standard algorithm to provide
+   a safe API to users.
 
    It MUST ignore the value of the very fist octet of padding and
    process the remaining bytes as if it was equal zero.
@@ -436,12 +442,6 @@ Internet-Draft         RSA Implementation Guidance          October 2023
 
    length requested length of output in octets
 
-   Output: derived key, an octet string
-
-   Steps:
-
-   1.  If KDK is not 32 octets long, or if length is larger than 8192
-       return error and stop.
 
 
 
@@ -449,6 +449,13 @@ Kario                     Expires 20 April 2024                 [Page 8]
 
 Internet-Draft         RSA Implementation Guidance          October 2023
 
+
+   Output: derived key, an octet string
+
+   Steps:
+
+   1.  If KDK is not 32 octets long, or if length is larger than 8192
+       return error and stop.
 
    2.  The returned value is created by concatenation of subsequent
        calls to a SHA-256 HMAC function with the KDK as the HMAC key and
@@ -491,13 +498,6 @@ Internet-Draft         RSA Implementation Guidance          October 2023
 
             c = OS2IP (C).
 
-       b.  Apply the RSADP decryption primitive to the RSA private key
-           (n, d) and the ciphertext representative c to produce an
-           integer message representative m:
-
-            m = RSADP ((n, d), c).
-
-
 
 
 
@@ -505,6 +505,12 @@ Kario                     Expires 20 April 2024                 [Page 9]
 
 Internet-Draft         RSA Implementation Guidance          October 2023
 
+
+       b.  Apply the RSADP decryption primitive to the RSA private key
+           (n, d) and the ciphertext representative c to produce an
+           integer message representative m:
+
+            m = RSADP ((n, d), c).
 
            Note: the RSADP MUST be constant-time with respect of message
            m.
@@ -545,12 +551,6 @@ Internet-Draft         RSA Implementation Guidance          October 2023
 
        2.  Create the candidate lengths and the random message
 
-           a.  Use the IRPRF with key KDK, "length" as six octet label
-               encoded with UTF-8, to generate 256 octet output.
-               Interpret this output as 128 two octet long big-endian
-               numbers.
-
-                CL = IRPRF (KDK, "length", 256).
 
 
 
@@ -561,6 +561,13 @@ Kario                     Expires 20 April 2024                [Page 10]
 
 Internet-Draft         RSA Implementation Guidance          October 2023
 
+
+           a.  Use the IRPRF with key KDK, "length" as six octet label
+               encoded with UTF-8, to generate 256 octet output.
+               Interpret this output as 128 two octet long big-endian
+               numbers.
+
+                CL = IRPRF (KDK, "length", 256).
 
            b.  Use the IRPRF with key KDK, "message" as a seven octet
                label encoded with UTF-8 to generate k octet long output
@@ -604,19 +611,18 @@ Internet-Draft         RSA Implementation Guidance          October 2023
        check variable is unset the code should return the last L octets
        of EM.
 
-       Note: The decision which length to use MUST be performed in side-
-       channel free manner.  While the length of the returned message is
-       not considered sensitive, the read memory location is.  As such,
-       when returning message M both EM and AM memory locations MUST be
-       read.
-
-
 
 
 Kario                     Expires 20 April 2024                [Page 11]
 
 Internet-Draft         RSA Implementation Guidance          October 2023
 
+
+       Note: The decision which length to use MUST be performed in side-
+       channel free manner.  While the length of the returned message is
+       not considered sensitive, the read memory location is.  As such,
+       when returning message M both EM and AM memory locations MUST be
+       read.
 
 11.  Deprecated Algorithms
 
@@ -660,12 +666,6 @@ Internet-Draft         RSA Implementation Guidance          October 2023
               DOI 10.17487/RFC2119, March 1997,
               <https://www.rfc-editor.org/info/rfc2119>.
 
-   [RFC5246]  Dierks, T. and E. Rescorla, "The Transport Layer Security
-              (TLS) Protocol Version 1.2", RFC 5246,
-              DOI 10.17487/RFC5246, August 2008,
-              <https://www.rfc-editor.org/info/rfc5246>.
-
-
 
 
 
@@ -673,6 +673,11 @@ Kario                     Expires 20 April 2024                [Page 12]
 
 Internet-Draft         RSA Implementation Guidance          October 2023
 
+
+   [RFC5246]  Dierks, T. and E. Rescorla, "The Transport Layer Security
+              (TLS) Protocol Version 1.2", RFC 5246,
+              DOI 10.17487/RFC5246, August 2008,
+              <https://www.rfc-editor.org/info/rfc5246>.
 
    [RFC6979]  Pornin, T., "Deterministic Usage of the Digital Signature
               Algorithm (DSA) and Elliptic Curve Digital Signature
@@ -700,11 +705,6 @@ Author's Address
    Czech Republic
 
    Email: hkario@redhat.com
-
-
-
-
-
 
 
 

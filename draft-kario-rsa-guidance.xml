@@ -301,6 +301,7 @@
             exponent d should be modified by adding a multiple of Euler
             phi(n): m = c^(d + b*phi(n)) mod n. Where b is a 64 bit long
             uniform random number.</t>
+        <t>A new value b MUST be selected for every RSADP() operation.</t>
         <t>If the key is the second form, the quintuple (p, q, dP, dQ,
             qInv) with optional sequence of triplets (r_i, d_i, t_i), i = 3, ...,
             u, then each exponent used MUST be blinded individually.</t>
@@ -319,7 +320,9 @@
             MUST be performed with side-channel free code.</t>
         <t>Use of smaller blinding factor is NOT RECOMMENDED, as values shorter
            than 64 bits have been shown to still be vulnerable to side-channel
-            attacks<xref target="Bauer12"/><xref target="Schindler11"/></t>
+            attacks<xref target="Bauer12"/><xref target="Schindler11"/>.</t>
+        <t>The b_1, b_2, ..., b_i factors MUST NOT be reused for multiple
+            RSADP() operations.</t>
     </section>
 
     <section title="Depadding">
