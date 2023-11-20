@@ -93,11 +93,11 @@ Table of Contents
    15. References  . . . . . . . . . . . . . . . . . . . . . . . . .  12
      15.1.  Normative References . . . . . . . . . . . . . . . . . .  12
      15.2.  Informative References . . . . . . . . . . . . . . . . .  13
-   Appendix A.  Test Vectors . . . . . . . . . . . . . . . . . . . .  13
-     A.1.  2048 bit key  . . . . . . . . . . . . . . . . . . . . . .  13
-     A.2.  3072 bit key  . . . . . . . . . . . . . . . . . . . . . .  13
-     A.3.  4096 bit key  . . . . . . . . . . . . . . . . . . . . . .  13
-   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  13
+   Appendix A.  Test Vectors . . . . . . . . . . . . . . . . . . . .  14
+     A.1.  2048 bit key  . . . . . . . . . . . . . . . . . . . . . .  14
+     A.2.  3072 bit key  . . . . . . . . . . . . . . . . . . . . . .  14
+     A.3.  4096 bit key  . . . . . . . . . . . . . . . . . . . . . .  15
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  15
 
 1.  Introduction
 
@@ -294,7 +294,7 @@ Internet-Draft         RSA Implementation Guidance          October 2023
    the value of the output.  A side-channel free implementation should
    perfom the subtraction in all cases and then copy the result or the
    first operand of the subtraction based on sign of the result of the
-   subtraction.
+   subtraction in side-channel free manner.
 
 8.  Base blinding
 
@@ -676,9 +676,39 @@ Internet-Draft         RSA Implementation Guidance          October 2023
 
 15.2.  Informative References
 
+   [Aciicmez05]
+              Acıiçmez, O., Schindler, W., and Ç. K. Koç, "Improving
+              Brumley and Boneh timing attack on unprotected SSL
+              implementations", Proceedings of the 12th ACM conference
+              on Computer and communications security CCS '05, 2005,
+              <https://doi.org/10.1145/1102120.1102140>.
+
+   [Aciicmez07]
+              Acıiçmez, O. and W. Schindler, "A Major Vulnerability in
+              RSA Implementations due to MicroArchitectural Analysis
+              Threat", Cryptology ePrint Archive Paper 2007/336, 2007,
+              <https://eprint.iacr.org/2007/336>.
+
+   [Aciicmez08]
+              Acıiçmez, O. and W. Schindler, "A Vulnerability in RSA
+              Implementations Due to Instruction Cache Analysis and Its
+              Demonstration on OpenSSL", Lecture Notes in Computer
+              Science vol 4964, 2007,
+              <https://doi.org/10.1007/978-3-540-79263-5_16>.
+
    [Bauer12]  Bauer, S., "Attacking Exponent Blinding in RSA without
               CRT", Lecture Notes in Computer Science vol 7275, 2012,
               <https://doi.org/10.1007/978-3-642-29912-4_7>.
+
+   [Brumley03]
+              Brumley, D. and D. Boneh, "Remote timing attacks are
+              practical", Computer Networks Volume 48, Issue 5, 2003,
+              <https://doi.org/10.1016/j.comnet.2005.01.010>.
+
+   [Dhem98]   Dhem, J., Koeune, F., Leroux, P., Mestré, P., Quisquater,
+              J., and J. Willems, "A Practical Implementation of the
+              Timing Attack", Lecture Notes in Computer Science vol
+              1820, 1998, <https://doi.org/10.1007/10721064_15>.
 
    [Kocher96] Kocher, P. C., "Timing Attacks on Implementations of
               Diffie-Hellman, RSA, DSS, and Other Systems.", Lecture
@@ -690,6 +720,16 @@ Internet-Draft         RSA Implementation Guidance          October 2023
               DOI 10.17487/RFC2119, March 1997,
               <https://www.rfc-editor.org/info/rfc2119>.
 
+
+
+
+
+
+Kario                     Expires 20 April 2024                [Page 13]
+
+Internet-Draft         RSA Implementation Guidance          October 2023
+
+
    [RFC5246]  Dierks, T. and E. Rescorla, "The Transport Layer Security
               (TLS) Protocol Version 1.2", RFC 5246,
               DOI 10.17487/RFC5246, August 2008,
@@ -700,11 +740,30 @@ Internet-Draft         RSA Implementation Guidance          October 2023
               Algorithm (ECDSA)", RFC 6979, DOI 10.17487/RFC6979, August
               2013, <https://www.rfc-editor.org/info/rfc6979>.
 
+   [Schindler00]
+              Schindler, W., "A Timing Attack against RSA with the
+              Chinese Remainder Theorem", Lecture Notes in Computer
+              Science vol 1965, 2000,
+              <https://doi.org/10.1007/3-540-44499-8_8>.
+
+   [Schindler01]
+              Schindler, W., Koeune, F., and J. Quisquater, "Improving
+              Divide and Conquer Attacks against Cryptosystems by Better
+              Error Detection / Correction Strategies.", Lecture Notes
+              in Computer Science vol 2260, 2001,
+              <https://doi.org/10.1007/3-540-45325-3_22>.
+
    [Schindler11]
               Schindler, W. and K. Itoh, "Exponent Blinding Does Not
               Always Lift (Partial) Spa Resistance to Higher-Level
               Security", Lecture Notes in Computer Science vol 6715,
               2011, <https://doi.org/10.1007/978-3-642-21554-4_5>.
+
+   [Schindler14]
+              Schindler, W. and A. Wiemers, "Power attacks in the
+              presence of exponent blinding.", Journal of Cryptographic
+              Engineering 4, 2014,
+              <https://doi.org/10.1007/s13389-014-0081-y>.
 
 Appendix A.  Test Vectors
 
@@ -716,19 +775,22 @@ A.2.  3072 bit key
 
    <<provide test vectors here>>
 
+
+
+
+
+
+
+Kario                     Expires 20 April 2024                [Page 14]
+
+Internet-Draft         RSA Implementation Guidance          October 2023
+
+
 A.3.  4096 bit key
 
    <<provide test vectors here>>
 
 Author's Address
-
-
-
-
-Kario                     Expires 20 April 2024                [Page 13]
-
-Internet-Draft         RSA Implementation Guidance          October 2023
-
 
    Hubert Kario (editor)
    Red Hat, Inc.
@@ -775,10 +837,4 @@ Internet-Draft         RSA Implementation Guidance          October 2023
 
 
 
-
-
-
-
-
-
-Kario                     Expires 20 April 2024                [Page 14]
+Kario                     Expires 20 April 2024                [Page 15]

@@ -250,7 +250,8 @@
             is conditional on the value of the output. A side-channel
             free implementation should perfom the subtraction in all cases
             and then copy the result or the first operand of the subtraction
-            based on sign of the result of the subtraction.
+            based on sign of the result of the subtraction in side-channel
+            free manner.
         </t>
         </section>
     </section>
@@ -609,6 +610,7 @@
             value="vol 6715"/>
       </reference>
 
+      <!-- attacks on RSA without CRT -->
       <reference
           anchor="Kocher96"
           target="https://doi.org/10.1007/3-540-68697-5_9">
@@ -621,6 +623,126 @@
             name="Lecture Notes in Computer Science"
             value="vol 1109"/>
       </reference>
+
+      <reference
+          anchor="Dhem98"
+          target="https://doi.org/10.1007/10721064_15">
+       <front>
+          <title>A Practical Implementation of the Timing Attack</title>
+          <author fullname="Jean-François Dhem"/>
+          <author fullname="François Koeune"/>
+          <author fullname="Philippe-Alexandre Leroux"/>
+          <author fullname="Patrick Mestré"/>
+          <author fullname="Jean-Jacques Quisquater"/>
+          <author fullname="Jean-Louis Willems"/>
+          <date year="1998"/>
+      </front>
+      <seriesInfo
+          name="Lecture Notes in Computer Science"
+          value="vol 1820"/>
+      </reference>
+
+      <reference
+          anchor="Schindler01"
+          target="https://doi.org/10.1007/3-540-45325-3_22">
+       <front>
+           <title>Improving Divide and Conquer Attacks against Cryptosystems by Better Error Detection / Correction Strategies.</title>
+           <author fullname="Werner Schindler"/>
+           <author fullname="François Koeune"/>
+           <author fullname="Jean-Jacques Quisquater"/>
+           <date year="2001"/>
+       </front>
+       <seriesInfo
+           name="Lecture Notes in Computer Science"
+           value="vol 2260"/>
+      </reference>
+
+      <!-- attacks on RSA with CRT -->
+      <reference
+          anchor="Schindler00"
+          target="https://doi.org/10.1007/3-540-44499-8_8">
+        <front>
+          <title>A Timing Attack against RSA with the Chinese Remainder Theorem</title>
+          <author fullname="Werner Schindler"/>
+          <date year="2000"/>
+        </front>
+        <seriesInfo
+            name="Lecture Notes in Computer Science"
+            value="vol 1965"/>
+      </reference>
+
+      <reference
+          anchor="Brumley03"
+          target="https://doi.org/10.1016/j.comnet.2005.01.010">
+        <front>
+          <title>Remote timing attacks are practical</title>
+          <author fullname="David Brumley"/>
+          <author fullname="Dan Boneh"/>
+          <date year="2003"/>
+        </front>
+        <seriesInfo
+            name="Computer Networks"
+            value="Volume 48, Issue 5"/>
+      </reference>
+
+      <reference
+          anchor="Aciicmez05"
+          target="https://doi.org/10.1145/1102120.1102140">
+         <front>
+           <title>Improving Brumley and Boneh timing attack on unprotected SSL implementations</title>
+           <author fullname="Onur Acıiçmez"/>
+           <author fullname="Werner Schindler"/>
+           <author fullname="Çetin K. Koç"/>
+           <date year="2005"/>
+        </front>
+        <seriesInfo
+            name="Proceedings of the 12th ACM conference on Computer and communications security"
+            value="CCS '05"/>
+      </reference>
+
+      <!-- attacks against blinded implementations -->
+      <reference
+          anchor="Aciicmez07"
+          target="https://eprint.iacr.org/2007/336">
+          <front>
+            <title>A Major Vulnerability in RSA Implementations due to MicroArchitectural Analysis Threat</title>
+            <author fullname="Onur Acıiçmez"/>
+            <author fullname="Werner Schindler"/>
+            <date year="2007"/>
+        </front>
+        <seriesInfo
+            name="Cryptology ePrint Archive"
+            value="Paper 2007/336"/>
+      </reference>
+
+      <reference
+          anchor="Aciicmez08"
+          target="https://doi.org/10.1007/978-3-540-79263-5_16">
+       <front>
+          <title>A Vulnerability in RSA Implementations Due to Instruction Cache Analysis and Its Demonstration on OpenSSL</title>
+          <author fullname="Onur Acıiçmez"/>
+          <author fullname="Werner Schindler"/>
+          <date year="2007"/>
+        </front>
+        <seriesInfo
+            name="Lecture Notes in Computer Science"
+            value="vol 4964"/>
+     </reference>
+
+     <reference
+         anchor="Schindler14"
+         target="https://doi.org/10.1007/s13389-014-0081-y">
+       <front>
+         <title>Power attacks in the presence of exponent blinding.</title>
+         <author fullname="Werner Schindler"/>
+         <author fullname="Andreas Wiemers"/>
+         <date year="2014"/>
+     </front>
+     <seriesInfo
+         name="Journal of Cryptographic Engineering"
+         value="4"/>
+     </reference>
+
     </references>
 
     <section anchor="test-vectors" title="Test Vectors">
