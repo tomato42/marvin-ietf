@@ -16,8 +16,8 @@ Abstract
 
    This document specifies additions and amendments to RFC 8017.
    Specifically, it provides guidance to implementers of the standard to
-   protect against side-channel attacks.  It also deprecates the PKCS #1
-   v1.5 encryption padding, but provides an alternative depadding
+   protect against side-channel attacks.  It also deprecates the RSAES-
+   PKCS-v1_5 encryption scheme, but provides an alternative depadding
    algorithm that protects against side-channel attacks raising from
    users of vulnerable APIs.  The purpose of this specification is to
    increase security of RSA implementations.
@@ -95,6 +95,8 @@ Table of Contents
      15.2.  Informative References . . . . . . . . . . . . . . . . .  13
    Appendix A.  Test Vectors . . . . . . . . . . . . . . . . . . . .  13
      A.1.  2048 bit key  . . . . . . . . . . . . . . . . . . . . . .  13
+     A.2.  3072 bit key  . . . . . . . . . . . . . . . . . . . . . .  13
+     A.3.  4096 bit key  . . . . . . . . . . . . . . . . . . . . . .  13
    Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  13
 
 1.  Introduction
@@ -103,9 +105,7 @@ Table of Contents
    providing guidance on implementing encryption schemes and signature
    schemes.
 
-   Unfortunately, typical uses of RSA encryption schemes leave it
-   vulnerable to side-channel attacks.  Protections against them are not
-   documented there, and attacks are mentioned only in passing.
+
 
 
 
@@ -114,14 +114,18 @@ Kario                     Expires 20 April 2024                 [Page 2]
 Internet-Draft         RSA Implementation Guidance          October 2023
 
 
+   Unfortunately, typical uses of RSA encryption schemes leave it
+   vulnerable to side-channel attacks.  Protections against them are not
+   documented there, and attacks are mentioned only in passing.
+
 2.  Rationale
 
-   The PKCS #1 v1.5 padding is known to be problematic since 1998, when
-   Daniel Bleichenbacher published his attack.  Side-channel attacks
-   against public key implementations, including RSA, are known to be
-   possible since 1996 thanks to work by Paul Kocher.  Despite those
-   results, side-channel attacks against RSA implementations have
-   proliferated for the next 25 years.
+   The RSAES-PKCS-v1_5 encryption scheme is known to be problematic
+   since 1998, when Daniel Bleichenbacher published his attack.  Side-
+   channel attacks against public key implementations, including RSA,
+   are known to be possible since 1996 thanks to work by Paul Kocher.
+   Despite those results, side-channel attacks against RSA
+   implementations have proliferated for the next 25 years.
 
    We thus provide guidance how to implement those algorithms in a way
    that should be secure against at least the simple timing side channel
@@ -158,10 +162,6 @@ Internet-Draft         RSA Implementation Guidance          October 2023
 
    l  length in octets of the message M
 
-   b_i  an exponent blinding factor for i-th prime, non-negative
-      integer.
-
-
 
 
 
@@ -169,6 +169,9 @@ Kario                     Expires 20 April 2024                 [Page 3]
 
 Internet-Draft         RSA Implementation Guidance          October 2023
 
+
+   b_i  an exponent blinding factor for i-th prime, non-negative
+      integer.
 
 5.  Side channel attacks
 
@@ -215,9 +218,6 @@ Internet-Draft         RSA Implementation Guidance          October 2023
    All operations that use private keys SHOULD additionally employ both
    base blinding and exponent blinding as protections against leaks
    inside modular exponentiation code.
-
-
-
 
 
 
@@ -403,9 +403,9 @@ Internet-Draft         RSA Implementation Guidance          October 2023
    It MUST ignore the value of the very fist octet of padding and
    process the remaining bytes as if it was equal zero.
 
-   The PKCS #1 v1.5 padding is considered deprecated, and should be used
-   only to process legacy data.  It MUST NOT be used as part of online
-   protocols or API endpoints.
+   The RSAES-PKCS-v1_5 encryption scheme is considered deprecated, and
+   should be used only to process legacy data.  It MUST NOT be used as
+   part of online protocols or API endpoints.
 
    For implementations that can't remove support for this padding mode
    it's RECOMMENDED to implement an implicit rejection mechanism that
@@ -420,8 +420,8 @@ Internet-Draft         RSA Implementation Guidance          October 2023
    not.
 
    The basic idea of the implicit rejection is to prepare a random but
-   deterministic message to be returned in case the standard PKCS #1
-   v1.5 padding checks fail.  To do that, use the private key and the
+   deterministic message to be returned in case the standard RSAES-PKCS-
+   v1_5 padding checks fail.  To do that, use the private key and the
    provided ciphertext to derive a static, but unknown to the attacker,
    random value.  It's a combination of the method documented in the TLS
    1.2 (RFC 5246[RFC5246]) and the deterministic (EC)DSA signatures (RFC
@@ -478,12 +478,12 @@ Internet-Draft         RSA Implementation Guidance          October 2023
 
 10.2.  Implicit rejection
 
-   For implementations that cannot remove support for the PKCS #1 v1.5
-   padding nor provide a usage-specific API, it's possible to implement
-   an implicit rejection algorithm as a protection measure.  It should
-   be noted that implementing it correctly is hard, thus it's
-   RECOMMENDED instead to disable support for PKCS #1 v1.5 padding
-   instead.
+   For implementations that cannot remove support for the RSAES-PKCS-
+   v1_5 encryption scheme nor provide a usage-specific API, it's
+   possible to implement an implicit rejection algorithm as a protection
+   measure.  It should be noted that implementing it correctly is hard,
+   thus it's RECOMMENDED instead to disable support for RSAES-PKCS-v1_5
+   padding instead.
 
    To implement implicit rejection, the RSAES-PKCS1-V1_5-DECRYPT from
    section 7.2.2 of RFC 8017 needs to be implemented as follows:
@@ -642,10 +642,10 @@ Internet-Draft         RSA Implementation Guidance          October 2023
 
 12.  Deprecated Algorithms
 
-   Current protocol deployments MUST NOT use encryption with RSA PKCS #1
-   v1.5 padding.  Support for RSA PKCS #1 v1.5 SHOULD be disabled in
+   Current protocol deployments MUST NOT use encryption with RSAES-PKCS-
+   v1_5 padding.  Support for RSAES-PKCS-v1_5 SHOULD be disabled in
    default configuration of any implementation of RSA cryptosystem.  All
-   new protocols MUST NOT specify PKCS #1 v1.5 as a valid encryption
+   new protocols MUST NOT specify RSAES-PKCS-v1_5 as a valid encryption
    padding for RSA keys.
 
 13.  IANA Considerations
@@ -712,7 +712,23 @@ A.1.  2048 bit key
 
    <<provide test vectors here>>
 
+A.2.  3072 bit key
+
+   <<provide test vectors here>>
+
+A.3.  4096 bit key
+
+   <<provide test vectors here>>
+
 Author's Address
+
+
+
+
+Kario                     Expires 20 April 2024                [Page 13]
+
+Internet-Draft         RSA Implementation Guidance          October 2023
+
 
    Hubert Kario (editor)
    Red Hat, Inc.
@@ -725,4 +741,44 @@ Author's Address
 
 
 
-Kario                     Expires 20 April 2024                [Page 13]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Kario                     Expires 20 April 2024                [Page 14]

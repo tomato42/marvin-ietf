@@ -64,7 +64,7 @@
         <t>This document specifies additions and amendments to
         RFC 8017. Specifically, it provides guidance to implementers
         of the standard to protect against side-channel attacks.
-        It also deprecates the PKCS #1 v1.5 encryption padding, but
+        It also deprecates the RSAES-PKCS-v1_5 encryption scheme, but
         provides an alternative depadding algorithm that protects against
         side-channel attacks raising from users of vulnerable APIs.
         The purpose of this specification is to increase security of
@@ -86,7 +86,8 @@
     </section>
 
     <section title="Rationale">
-        <t>The PKCS #1 v1.5 padding is known to be problematic since 1998,
+        <t>The RSAES-PKCS-v1_5 encryption scheme is known to be problematic
+        since 1998,
         when Daniel Bleichenbacher published his attack.
         Side-channel attacks against public key implementations, including RSA,
         are known to be possible since 1996 thanks to work by Paul Kocher.
@@ -331,8 +332,9 @@
             to provide a safe API to users.</t>
         <t>It MUST ignore the value of the very fist octet of padding and
             process the remaining bytes as if it was equal zero.</t>
-        <t>The PKCS #1 v1.5 padding is considered deprecated, and should be
-        used only to process legacy data. It MUST NOT be used as part
+        <t>The RSAES-PKCS-v1_5 encryption scheme is considered deprecated, and
+            should be
+            used only to process legacy data. It MUST NOT be used as part
             of online protocols or API endpoints.</t>
         <t>For implementations that can't remove support for this padding
             mode it's RECOMMENDED to implement an implicit rejection mechanism
@@ -347,7 +349,7 @@
             guess if the padding check failed or not.</t>
         <t>The basic idea of the implicit rejection is to prepare a random
             but deterministic message to be returned in case the standard
-            PKCS #1 v1.5 padding checks fail. To do that, use the private
+            RSAES-PKCS-v1_5 padding checks fail. To do that, use the private
             key and the provided ciphertext to derive a static, but unknown to
             the attacker, random value. It's a combination of the method
             documented in the TLS 1.2 (RFC 5246<xref target="RFC5246"/>)
@@ -385,13 +387,14 @@
             </list>
         </section>
         <section title="Implicit rejection">
-            <t>For implementations that cannot remove support for the PKCS #1
-            v1.5 padding nor provide a usage-specific API,
+            <t>For implementations that cannot remove support for the
+            RSAES-PKCS-v1_5 encryption scheme
+            nor provide a usage-specific API,
             it's possible to implement an implicit rejection
              algorithm as a protection measure. It should be noted that
             implementing it correctly is hard, thus it's RECOMMENDED instead
             to
-             disable support for PKCS #1 v1.5 padding instead.</t>
+             disable support for RSAES-PKCS-v1_5 padding instead.</t>
             <t>To implement implicit rejection, the
              RSAES-PKCS1-V1_5-DECRYPT from section 7.2.2 of RFC 8017 needs
              to be implemented as follows:</t>
@@ -540,10 +543,10 @@
 
     <section title="Deprecated Algorithms">
         <t>Current protocol deployments MUST NOT use
-            encryption with RSA PKCS #1 v1.5 padding.
-            Support for RSA PKCS #1 v1.5 SHOULD be disabled in default
+            encryption with RSAES-PKCS-v1_5 padding.
+            Support for RSAES-PKCS-v1_5 SHOULD be disabled in default
             configuration of any implementation of RSA cryptosystem.
-            All new protocols MUST NOT specify PKCS #1 v1.5 as a valid
+            All new protocols MUST NOT specify RSAES-PKCS-v1_5 as a valid
             encryption padding for RSA keys.</t>
     </section>
 
@@ -622,6 +625,12 @@
 
     <section anchor="test-vectors" title="Test Vectors">
         <section title="2048 bit key">
+            <t>«provide test vectors here»</t>
+        </section>
+        <section title="3072 bit key">
+            <t>«provide test vectors here»</t>
+        </section>
+        <section title="4096 bit key">
             <t>«provide test vectors here»</t>
         </section>
     </section>
