@@ -95,15 +95,15 @@ Table of Contents
      15.2.  Informative References . . . . . . . . . . . . . . . . .  13
    Appendix A.  Test Vectors . . . . . . . . . . . . . . . . . . . .  15
      A.1.  2048 bit key  . . . . . . . . . . . . . . . . . . . . . .  15
-     A.2.  3072 bit key  . . . . . . . . . . . . . . . . . . . . . .  15
-     A.3.  4096 bit key  . . . . . . . . . . . . . . . . . . . . . .  15
-   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  15
+     A.2.  2049 bit key  . . . . . . . . . . . . . . . . . . . . . .  16
+     A.3.  3072 bit key  . . . . . . . . . . . . . . . . . . . . . .  16
+     A.4.  4096 bit key  . . . . . . . . . . . . . . . . . . . . . .  16
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  16
 
 1.  Introduction
 
    The PKCS #1 [RFC8017] describes the RSA cryptosystem, providing
    guidance on implementing encryption schemes and signature schemes.
-
 
 
 
@@ -822,18 +822,18 @@ A.1.  2048 bit key
 
    <<provide test vectors here>>
 
-A.2.  3072 bit key
+   see also: https://github.com/tlsfuzzer/tlslite-
+   ng/blob/master/unit_tests/test_tlslite_utils_rsakey.py#L1694
 
-   <<provide test vectors here>>
+   proposed test vectors:
 
-A.3.  4096 bit key
+   Otherwise valid, but with wrong first byte of plaintext
 
-   <<provide test vectors here>>
+   Otherwise valid, but with padding type specifying signature
 
-Author's Address
+   Otherwise valid, but with PS of 7 bytes
 
-
-
+   Otherwise valid, but with PS of 0 bytes
 
 
 
@@ -842,6 +842,32 @@ Kario                     Expires 20 April 2024                [Page 15]
 Internet-Draft         RSA Implementation Guidance          October 2023
 
 
+   Otherwise valid, but with the message separator byte missing
+
+   invalid ciphertext that decrypts to a synthehic message of maximum
+   size
+
+   invalid ciphertext that decrypts to a 0-bytes long message
+
+   invalid ciphertext that needs to use the second-to-last synthethic
+   length for the returned message
+
+   valid ciphertext that starts with a zero byte
+
+A.2.  2049 bit key
+
+   <<provide test vectors here
+
+A.3.  3072 bit key
+
+   <<provide test vectors here>>
+
+A.4.  4096 bit key
+
+   <<provide test vectors here>>
+
+Author's Address
+
    Hubert Kario (editor)
    Red Hat, Inc.
    Purkynova 115
@@ -849,32 +875,6 @@ Internet-Draft         RSA Implementation Guidance          October 2023
    Czech Republic
 
    Email: hkario@redhat.com
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

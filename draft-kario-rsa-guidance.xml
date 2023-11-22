@@ -52,7 +52,7 @@
       </address>
     </author>
 
-    <date day="18" month="October" year="2023" />
+    <date day="22" month="November" year="2023" />
 
     <area>General</area>
 
@@ -806,6 +806,23 @@
     <section anchor="test-vectors" title="Test Vectors">
         <section title="2048 bit key">
             <t>«provide test vectors here»</t>
+            <t>see also: https://github.com/tlsfuzzer/tlslite-ng/blob/master/unit_tests/test_tlslite_utils_rsakey.py#L1694</t>
+            <t>proposed test vectors:</t>
+            <t>Otherwise valid, but with wrong first byte of plaintext</t>
+            <t>Otherwise valid, but with padding type specifying signature</t>
+            <t>Otherwise valid, but with PS of 7 bytes</t>
+            <t>Otherwise valid, but with PS of 0 bytes</t>
+            <t>Otherwise valid, but with the message separator byte missing</t>
+            <t>invalid ciphertext that decrypts to a synthehic message of
+               maximum size</t>
+            <t>invalid ciphertext that decrypts to a 0-bytes long message</t>
+            <t>invalid ciphertext that needs to use the second-to-last
+               synthethic length for the returned message</t>
+            <t>valid ciphertext that starts with a zero byte</t>
+
+        </section>
+        <section title="2049 bit key">
+            <t>«provide test vectors here</t>
         </section>
         <section title="3072 bit key">
             <t>«provide test vectors here»</t>
