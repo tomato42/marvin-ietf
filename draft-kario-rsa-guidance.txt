@@ -74,36 +74,36 @@ Table of Contents
    3.  Requirements Language . . . . . . . . . . . . . . . . . . . .   3
    4.  Notation  . . . . . . . . . . . . . . . . . . . . . . . . . .   3
    5.  Side channel attacks  . . . . . . . . . . . . . . . . . . . .   4
-   6.  General recommendations . . . . . . . . . . . . . . . . . . .   4
+   6.  General recommendations . . . . . . . . . . . . . . . . . . .   5
    7.  Side-channel free modular exponentiation  . . . . . . . . . .   5
      7.1.  General recommendations . . . . . . . . . . . . . . . . .   5
-     7.2.  Montgomery ladder . . . . . . . . . . . . . . . . . . . .   5
+     7.2.  Montgomery ladder . . . . . . . . . . . . . . . . . . . .   6
      7.3.  Montgomery reduction in multiplication  . . . . . . . . .   6
    8.  Base blinding . . . . . . . . . . . . . . . . . . . . . . . .   6
    9.  Exponent blinding . . . . . . . . . . . . . . . . . . . . . .   7
    10. Depadding . . . . . . . . . . . . . . . . . . . . . . . . . .   8
-     10.1.  IRPRF  . . . . . . . . . . . . . . . . . . . . . . . . .   8
-     10.2.  Implicit rejection . . . . . . . . . . . . . . . . . . .   9
+     10.1.  IRPRF  . . . . . . . . . . . . . . . . . . . . . . . . .   9
+     10.2.  Implicit rejection . . . . . . . . . . . . . . . . . . .  10
    11. Non-fixes . . . . . . . . . . . . . . . . . . . . . . . . . .  12
      11.1.  Random delays  . . . . . . . . . . . . . . . . . . . . .  12
      11.2.  Returing random value from API . . . . . . . . . . . . .  12
-   12. Deprecated Algorithms . . . . . . . . . . . . . . . . . . . .  12
-   13. IANA Considerations . . . . . . . . . . . . . . . . . . . . .  12
-   14. Security Considerations . . . . . . . . . . . . . . . . . . .  12
-   15. References  . . . . . . . . . . . . . . . . . . . . . . . . .  12
-     15.1.  Normative References . . . . . . . . . . . . . . . . . .  12
+   12. Deprecated Algorithms . . . . . . . . . . . . . . . . . . . .  13
+   13. IANA Considerations . . . . . . . . . . . . . . . . . . . . .  13
+   14. Security Considerations . . . . . . . . . . . . . . . . . . .  13
+   15. References  . . . . . . . . . . . . . . . . . . . . . . . . .  13
+     15.1.  Normative References . . . . . . . . . . . . . . . . . .  13
      15.2.  Informative References . . . . . . . . . . . . . . . . .  13
-   Appendix A.  Test Vectors . . . . . . . . . . . . . . . . . . . .  14
-     A.1.  2048 bit key  . . . . . . . . . . . . . . . . . . . . . .  14
-     A.2.  3072 bit key  . . . . . . . . . . . . . . . . . . . . . .  14
+   Appendix A.  Test Vectors . . . . . . . . . . . . . . . . . . . .  15
+     A.1.  2048 bit key  . . . . . . . . . . . . . . . . . . . . . .  15
+     A.2.  3072 bit key  . . . . . . . . . . . . . . . . . . . . . .  15
      A.3.  4096 bit key  . . . . . . . . . . . . . . . . . . . . . .  15
    Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  15
 
 1.  Introduction
 
-   The PKCS #1 [RFC8017] specification describes the RSA cryptosystem,
-   providing guidance on implementing encryption schemes and signature
-   schemes.
+   The PKCS #1 [RFC8017] describes the RSA cryptosystem, providing
+   guidance on implementing encryption schemes and signature schemes.
+
 
 
 
@@ -114,18 +114,30 @@ Kario                     Expires 20 April 2024                 [Page 2]
 Internet-Draft         RSA Implementation Guidance          October 2023
 
 
-   Unfortunately, typical uses of RSA encryption schemes leave it
-   vulnerable to side-channel attacks.  Protections against them are not
-   documented there, and attacks are mentioned only in passing.
+   Unfortunately, straight-forward implementation of the RSA encryption
+   schemes leave it vulnerable to side-channel attacks.  Protections
+   against them are not documented in RFC 8017, and attacks are
+   mentioned only in passing.
 
 2.  Rationale
 
    The RSAES-PKCS-v1_5 encryption scheme is known to be problematic
-   since 1998, when Daniel Bleichenbacher published his attack.  Side-
-   channel attacks against public key implementations, including RSA,
-   are known to be possible since 1996 thanks to work by Paul Kocher.
+   since 1998, when Daniel Bleichenbacher published his attack
+   [Bleichenbacher98].  Side-channel attacks against public key
+   algorithms, including RSA, are known to be possible since 1996 thanks
+   to work by Paul Kocher [Kocher96].
+
    Despite those results, side-channel attacks against RSA
-   implementations have proliferated for the next 25 years.
+   implementations have proliferated for the next 25 years.  Including
+   attacks against simple exponentiation implementations
+   [Dhem98][Schindler01], implementations that use the Chinese Remainder
+   Theorem optimisation [Schindler00][Brumley03] [Aciicmez05], and
+   implementations that use either base or exponent blinding exclusively
+   [Aciicmez07][Aciicmez08] [Schindler14].
+
+   Similarly, side-channel free handling of the errors from the RSAES-
+   PKCS-v1_5 decryption operation is something that implementations
+   struggle with [Bock18][Kario23].
 
    We thus provide guidance how to implement those algorithms in a way
    that should be secure against at least the simple timing side channel
@@ -151,6 +163,13 @@ Internet-Draft         RSA Implementation Guidance          October 2023
 
    bbInv  base un-blinding factor, a positive integer,
 
+
+
+Kario                     Expires 20 April 2024                 [Page 3]
+
+Internet-Draft         RSA Implementation Guidance          October 2023
+
+
         bbInv = bb^(-1) mod n
 
    D  octet string representation of d
@@ -161,14 +180,6 @@ Internet-Draft         RSA Implementation Guidance          October 2023
       ciphertext C
 
    l  length in octets of the message M
-
-
-
-
-Kario                     Expires 20 April 2024                 [Page 3]
-
-Internet-Draft         RSA Implementation Guidance          October 2023
-
 
    b_i  an exponent blinding factor for i-th prime, non-negative
       integer.
@@ -202,6 +213,19 @@ Internet-Draft         RSA Implementation Guidance          October 2023
    sample size the attacker is able to collect, not on size of the side-
    channel.
 
+
+
+
+
+
+
+
+
+Kario                     Expires 20 April 2024                 [Page 4]
+
+Internet-Draft         RSA Implementation Guidance          October 2023
+
+
 6.  General recommendations
 
    As a general rule, all operations that process secret information (be
@@ -218,13 +242,6 @@ Internet-Draft         RSA Implementation Guidance          October 2023
    All operations that use private keys SHOULD additionally employ both
    base blinding and exponent blinding as protections against leaks
    inside modular exponentiation code.
-
-
-
-Kario                     Expires 20 April 2024                 [Page 4]
-
-Internet-Draft         RSA Implementation Guidance          October 2023
-
 
 7.  Side-channel free modular exponentiation
 
@@ -254,6 +271,17 @@ Internet-Draft         RSA Implementation Guidance          October 2023
    equal to the size of the modulus and not depend on bit size of the
    output.
 
+
+
+
+
+
+
+Kario                     Expires 20 April 2024                 [Page 5]
+
+Internet-Draft         RSA Implementation Guidance          October 2023
+
+
 7.2.  Montgomery ladder
 
    For the modular exponentiation algorithm to be side-channel free
@@ -272,15 +300,6 @@ Internet-Draft         RSA Implementation Guidance          October 2023
    the bits of the exponent.  To counteract it, the implementation
    should ensure that both memory locations are accessed and updated on
    every step.
-
-
-
-
-
-Kario                     Expires 20 April 2024                 [Page 5]
-
-Internet-Draft         RSA Implementation Guidance          October 2023
-
 
 7.3.  Montgomery reduction in multiplication
 
@@ -312,6 +331,13 @@ Internet-Draft         RSA Implementation Guidance          October 2023
 
    Compute multiplicative inverse of bb modulo n.
 
+
+
+Kario                     Expires 20 April 2024                 [Page 6]
+
+Internet-Draft         RSA Implementation Guidance          October 2023
+
+
      bbInv = bb^(-1) mod n
 
    In the RSADP() operation, after performing step 1, multiply c by bb
@@ -330,13 +356,6 @@ Internet-Draft         RSA Implementation Guidance          October 2023
 
    A given pair of blinding factors (bb, bbInv) MUST NOT be used for
    more than one RSADP() operation.
-
-
-
-Kario                     Expires 20 April 2024                 [Page 6]
-
-Internet-Draft         RSA Implementation Guidance          October 2023
-
 
    Unless the multiplication (squaring) and reduction modulo operations
    are verified to be side-channel free, it's RECOMMENDED to generate
@@ -367,6 +386,14 @@ Internet-Draft         RSA Implementation Guidance          October 2023
 
    3.  If u > 3, then m_i = c^(d_i + b_i * phi(r_i)) mod (r_i)
 
+
+
+
+Kario                     Expires 20 April 2024                 [Page 7]
+
+Internet-Draft         RSA Implementation Guidance          October 2023
+
+
    Where b_1, b_2, ..., b_i are all uniformly selected random numbers at
    least 64 bits long (or at least 2 machine word sizes, whichever is
    greater).
@@ -384,15 +411,6 @@ Internet-Draft         RSA Implementation Guidance          October 2023
 
    The b_1, b_2, ..., b_i factors MUST NOT be reused for multiple
    RSADP() operations.
-
-
-
-
-
-Kario                     Expires 20 April 2024                 [Page 7]
-
-Internet-Draft         RSA Implementation Guidance          October 2023
-
 
 10.  Depadding
 
@@ -419,6 +437,19 @@ Internet-Draft         RSA Implementation Guidance          October 2023
    between the implementations to guess if the padding check failed or
    not.
 
+
+
+
+
+
+
+
+
+Kario                     Expires 20 April 2024                 [Page 8]
+
+Internet-Draft         RSA Implementation Guidance          October 2023
+
+
    The basic idea of the implicit rejection is to prepare a random but
    deterministic message to be returned in case the standard RSAES-PKCS-
    v1_5 padding checks fail.  To do that, use the private key and the
@@ -441,14 +472,6 @@ Internet-Draft         RSA Implementation Guidance          October 2023
    label a label making the output unique for a given KDK
 
    length requested length of output in octets
-
-
-
-
-Kario                     Expires 20 April 2024                 [Page 8]
-
-Internet-Draft         RSA Implementation Guidance          October 2023
-
 
    Output: derived key, an octet string
 
@@ -476,6 +499,13 @@ Internet-Draft         RSA Implementation Guidance          October 2023
    5.  The output is the length left-most octets of the concatenated
        HMAC output
 
+
+
+Kario                     Expires 20 April 2024                 [Page 9]
+
+Internet-Draft         RSA Implementation Guidance          October 2023
+
+
 10.2.  Implicit rejection
 
    For implementations that cannot remove support for the RSAES-PKCS-
@@ -497,14 +527,6 @@ Internet-Draft         RSA Implementation Guidance          October 2023
            representative c:
 
             c = OS2IP (C).
-
-
-
-
-Kario                     Expires 20 April 2024                 [Page 9]
-
-Internet-Draft         RSA Implementation Guidance          October 2023
-
 
        b.  Apply the RSADP decryption primitive to the RSA private key
            (n, d) and the ciphertext representative c to produce an
@@ -532,6 +554,14 @@ Internet-Draft         RSA Implementation Guidance          October 2023
            a.  Convert the private expoent d to a string of length k
                octets:
 
+
+
+
+Kario                     Expires 20 April 2024                [Page 10]
+
+Internet-Draft         RSA Implementation Guidance          October 2023
+
+
                 D = I2OSP (d, k).
 
            b.  Hash the private exponent using the SHA-256 algorithm:
@@ -550,17 +580,6 @@ Internet-Draft         RSA Implementation Guidance          October 2023
                 KDK = HMAC (DH, C, SHA256).
 
        2.  Create the candidate lengths and the random message
-
-
-
-
-
-
-
-Kario                     Expires 20 April 2024                [Page 10]
-
-Internet-Draft         RSA Implementation Guidance          October 2023
-
 
            a.  Use the IRPRF with key KDK, "length" as six octet label
                encoded with UTF-8, to generate 256 octet output.
@@ -591,6 +610,14 @@ Internet-Draft         RSA Implementation Guidance          October 2023
 
         EM = 0x00 || 0x02 || PS || 0x00 || M.
 
+
+
+
+Kario                     Expires 20 April 2024                [Page 11]
+
+Internet-Draft         RSA Implementation Guidance          October 2023
+
+
        If the first octet of EM does not have hexadecimal value 0x00, if
        the second octet of EM does not have hexadecimal value 0x02, if
        there is no octet with hexadecimal value 0x00 to separate PS from
@@ -610,13 +637,6 @@ Internet-Draft         RSA Implementation Guidance          October 2023
        set, the code should return the last AL octets of AM, in case the
        check variable is unset the code should return the last L octets
        of EM.
-
-
-
-Kario                     Expires 20 April 2024                [Page 11]
-
-Internet-Draft         RSA Implementation Guidance          October 2023
-
 
        Note: The decision which length to use MUST be performed in side-
        channel free manner.  While the length of the returned message is
@@ -639,6 +659,20 @@ Internet-Draft         RSA Implementation Guidance          October 2023
 
    <<describe why returning a random message, even of user-specified
    length is not a universal solution>>
+
+
+
+
+
+
+
+
+
+
+Kario                     Expires 20 April 2024                [Page 12]
+
+Internet-Draft         RSA Implementation Guidance          October 2023
+
 
 12.  Deprecated Algorithms
 
@@ -666,14 +700,6 @@ Internet-Draft         RSA Implementation Guidance          October 2023
               RFC 8017, DOI 10.17487/RFC8017, November 2016,
               <https://www.rfc-editor.org/info/rfc8017>.
 
-
-
-
-Kario                     Expires 20 April 2024                [Page 12]
-
-Internet-Draft         RSA Implementation Guidance          October 2023
-
-
 15.2.  Informative References
 
    [Aciicmez05]
@@ -696,9 +722,29 @@ Internet-Draft         RSA Implementation Guidance          October 2023
               Science vol 4964, 2007,
               <https://doi.org/10.1007/978-3-540-79263-5_16>.
 
+
+
+
+Kario                     Expires 20 April 2024                [Page 13]
+
+Internet-Draft         RSA Implementation Guidance          October 2023
+
+
    [Bauer12]  Bauer, S., "Attacking Exponent Blinding in RSA without
               CRT", Lecture Notes in Computer Science vol 7275, 2012,
               <https://doi.org/10.1007/978-3-642-29912-4_7>.
+
+   [Bleichenbacher98]
+              Bleichenbacher, D., "Chosen Ciphertext Attacks Against
+              Protocols Based on the RSA Encryption Standard PKCS#1",
+              Lecture Notes in Computer Science vol 1462,
+              <https://doi.org/10.1007/BFb0055716>.
+
+   [Bock18]   Böck, H., Somorovsky, J., and C. Young, "Return Of
+              Bleichenbacher's Oracle Threat (ROBOT)", 27th USENIX
+              Security Symposium USENIX Security 18, 2018,
+              <https://www.usenix.org/conference/usenixsecurity18/
+              presentation/bock>.
 
    [Brumley03]
               Brumley, D. and D. Boneh, "Remote timing attacks are
@@ -710,6 +756,10 @@ Internet-Draft         RSA Implementation Guidance          October 2023
               Timing Attack", Lecture Notes in Computer Science vol
               1820, 1998, <https://doi.org/10.1007/10721064_15>.
 
+   [Kario23]  Kario, H., "Everlasting ROBOT: the Marvin Attack", 28th
+              European Symposium on Research in Computer Security ,
+              2023, <https://eprint.iacr.org/2023/1442>.
+
    [Kocher96] Kocher, P. C., "Timing Attacks on Implementations of
               Diffie-Hellman, RSA, DSS, and Other Systems.", Lecture
               Notes in Computer Science vol 1109, 1996,
@@ -720,20 +770,21 @@ Internet-Draft         RSA Implementation Guidance          October 2023
               DOI 10.17487/RFC2119, March 1997,
               <https://www.rfc-editor.org/info/rfc2119>.
 
-
-
-
-
-
-Kario                     Expires 20 April 2024                [Page 13]
-
-Internet-Draft         RSA Implementation Guidance          October 2023
-
-
    [RFC5246]  Dierks, T. and E. Rescorla, "The Transport Layer Security
               (TLS) Protocol Version 1.2", RFC 5246,
               DOI 10.17487/RFC5246, August 2008,
               <https://www.rfc-editor.org/info/rfc5246>.
+
+
+
+
+
+
+
+Kario                     Expires 20 April 2024                [Page 14]
+
+Internet-Draft         RSA Implementation Guidance          October 2023
+
 
    [RFC6979]  Pornin, T., "Deterministic Usage of the Digital Signature
               Algorithm (DSA) and Elliptic Curve Digital Signature
@@ -775,22 +826,21 @@ A.2.  3072 bit key
 
    <<provide test vectors here>>
 
-
-
-
-
-
-
-Kario                     Expires 20 April 2024                [Page 14]
-
-Internet-Draft         RSA Implementation Guidance          October 2023
-
-
 A.3.  4096 bit key
 
    <<provide test vectors here>>
 
 Author's Address
+
+
+
+
+
+
+Kario                     Expires 20 April 2024                [Page 15]
+
+Internet-Draft         RSA Implementation Guidance          October 2023
+
 
    Hubert Kario (editor)
    Red Hat, Inc.
@@ -837,4 +887,10 @@ Author's Address
 
 
 
-Kario                     Expires 20 April 2024                [Page 15]
+
+
+
+
+
+
+Kario                     Expires 20 April 2024                [Page 16]

@@ -75,24 +75,41 @@
 
   <middle>
     <section title="Introduction">
-        <t>The <xref target="RFC8017">PKCS #1</xref> specification
+        <t>The <xref target="RFC8017">PKCS #1</xref>
         describes the RSA cryptosystem, providing guidance on implementing
         encryption schemes and signature schemes.</t>
 
-        <t>Unfortunately, typical uses of RSA encryption schemes leave it
-        vulnerable to side-channel attacks. Protections against them
-        are not documented there, and attacks are mentioned only in passing.
-        </t>
+        <t>Unfortunately, straight-forward implementation of the RSA
+        encryption schemes leave it vulnerable to side-channel attacks.
+        Protections against them are not documented in RFC 8017,
+        and attacks are mentioned only in passing.</t>
     </section>
 
     <section title="Rationale">
         <t>The RSAES-PKCS-v1_5 encryption scheme is known to be problematic
         since 1998,
-        when Daniel Bleichenbacher published his attack.
-        Side-channel attacks against public key implementations, including RSA,
-        are known to be possible since 1996 thanks to work by Paul Kocher.
+        when Daniel Bleichenbacher published his attack
+        <xref target="Bleichenbacher98"/>.
+        Side-channel attacks against public key algorithms, including RSA,
+        are known to be possible since 1996 thanks to work by Paul Kocher
+        <xref target="Kocher96"/>.
+        </t>
+        <t>
         Despite those results, side-channel attacks against RSA implementations
         have proliferated for the next 25 years.
+        Including attacks against simple exponentiation implementations
+        <xref target="Dhem98"/><xref target="Schindler01"/>, implementations
+        that use the Chinese Remainder Theorem optimisation
+        <xref target="Schindler00"/><xref target="Brumley03"/>
+        <xref target="Aciicmez05"/>, and implementations that use
+        either base or exponent blinding exclusively
+        <xref target="Aciicmez07"/><xref target="Aciicmez08"/>
+        <xref target="Schindler14"/>.
+        </t>
+        <t>Similarly, side-channel free handling of the errors from
+        the RSAES-PKCS-v1_5 decryption operation is something that
+        implementations struggle with
+        <xref target="Bock18"/><xref target="Kario23"/>.
         </t>
         <t>We thus provide guidance how to implement those algorithms
         in a way that should be secure against at least the simple timing
@@ -610,6 +627,18 @@
             value="vol 6715"/>
       </reference>
 
+      <reference
+          anchor="Bleichenbacher98"
+          target="https://doi.org/10.1007/BFb0055716">
+        <front>
+          <title>Chosen Ciphertext Attacks Against Protocols Based on the RSA Encryption Standard PKCS#1</title>
+          <author fullname="Daniel Bleichenbacher"/>
+        </front>
+        <seriesInfo
+            name="Lecture Notes in Computer Science"
+            value="vol 1462"/>
+      </reference>
+
       <!-- attacks on RSA without CRT -->
       <reference
           anchor="Kocher96"
@@ -742,6 +771,35 @@
          name="Journal of Cryptographic Engineering"
          value="4"/>
      </reference>
+
+     <!-- other -->
+     <reference
+         anchor="Bock18"
+         target="https://www.usenix.org/conference/usenixsecurity18/presentation/bock">
+       <front>
+         <title>Return Of Bleichenbacher's Oracle Threat (ROBOT)</title>
+         <author fullname="Hanno Böck"/>
+         <author fullname="Juraj Somorovsky"/>
+         <author fullname="Craig Young"/>
+         <date year="2018"/>
+       </front>
+       <seriesInfo
+           name="27th USENIX Security Symposium"
+           value="USENIX Security 18"/>
+      </reference>
+
+      <reference
+          anchor="Kario23"
+          target="https://eprint.iacr.org/2023/1442">
+        <front>
+          <title>Everlasting ROBOT: the Marvin Attack</title>
+          <author fullname="Hubert Kario"/>
+          <date year="2023"/>
+        </front>
+        <seriesInfo
+          name="28th European Symposium on Research in Computer Security"
+          value=""/>
+      </reference>
 
     </references>
 
