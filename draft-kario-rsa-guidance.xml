@@ -543,6 +543,19 @@
         </section>
     </section>
 
+    <section title="Safe API">
+        <t>Performing all actions in a way that doesn't leak the status
+        of the padding check includes the API provided to 3rd party code.
+        In particular, if the RSA decryption implementation doesn't
+        implement implicit rejection, then all three pieces of information:
+        the padding check, the length of returned message, and the value
+        of the message are sensitive information, useful in mounting an
+        attack. As such, any API that returns an error in substantially
+        different manner than a successful decryption (e.g. raising
+        an exception, returning a null pointer, returning a different
+        type of structure) is vulnerable to side-channel attacks.</t>
+    </section>
+
     <section title="Non-fixes">
         <t>While there are infinite ways to implement those algorithms
         incorrectly few common ideas to work-around side-channel attacks

@@ -4,9 +4,9 @@
 
 Internet Engineering Task Force                            H. Kario, Ed.
 Internet-Draft                                             Red Hat, Inc.
-Updates: 8017 (if approved)                              18 October 2023
+Updates: 8017 (if approved)                             22 November 2023
 Intended status: Informational                                          
-Expires: 20 April 2024
+Expires: 25 May 2024
 
 
  Implementation Guidance for the PKCS #1 RSA Cryptography Specification
@@ -37,7 +37,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 20 April 2024.
+   This Internet-Draft will expire on 25 May 2024.
 
 Copyright Notice
 
@@ -53,9 +53,9 @@ Copyright Notice
 
 
 
-Kario                     Expires 20 April 2024                 [Page 1]
+Kario                      Expires 25 May 2024                  [Page 1]
 
-Internet-Draft         RSA Implementation Guidance          October 2023
+Internet-Draft         RSA Implementation Guidance         November 2023
 
 
    This document is subject to BCP 78 and the IETF Trust's Legal
@@ -84,15 +84,16 @@ Table of Contents
    10. Depadding . . . . . . . . . . . . . . . . . . . . . . . . . .   8
      10.1.  IRPRF  . . . . . . . . . . . . . . . . . . . . . . . . .   9
      10.2.  Implicit rejection . . . . . . . . . . . . . . . . . . .  10
-   11. Non-fixes . . . . . . . . . . . . . . . . . . . . . . . . . .  12
-     11.1.  Random delays  . . . . . . . . . . . . . . . . . . . . .  12
-     11.2.  Returing random value from API . . . . . . . . . . . . .  12
-   12. Deprecated Algorithms . . . . . . . . . . . . . . . . . . . .  13
-   13. IANA Considerations . . . . . . . . . . . . . . . . . . . . .  13
-   14. Security Considerations . . . . . . . . . . . . . . . . . . .  13
-   15. References  . . . . . . . . . . . . . . . . . . . . . . . . .  13
-     15.1.  Normative References . . . . . . . . . . . . . . . . . .  13
-     15.2.  Informative References . . . . . . . . . . . . . . . . .  13
+   11. Safe API  . . . . . . . . . . . . . . . . . . . . . . . . . .  12
+   12. Non-fixes . . . . . . . . . . . . . . . . . . . . . . . . . .  12
+     12.1.  Random delays  . . . . . . . . . . . . . . . . . . . . .  13
+     12.2.  Returing random value from API . . . . . . . . . . . . .  13
+   13. Deprecated Algorithms . . . . . . . . . . . . . . . . . . . .  13
+   14. IANA Considerations . . . . . . . . . . . . . . . . . . . . .  13
+   15. Security Considerations . . . . . . . . . . . . . . . . . . .  13
+   16. References  . . . . . . . . . . . . . . . . . . . . . . . . .  13
+     16.1.  Normative References . . . . . . . . . . . . . . . . . .  13
+     16.2.  Informative References . . . . . . . . . . . . . . . . .  13
    Appendix A.  Test Vectors . . . . . . . . . . . . . . . . . . . .  15
      A.1.  2048 bit key  . . . . . . . . . . . . . . . . . . . . . .  15
      A.2.  2049 bit key  . . . . . . . . . . . . . . . . . . . . . .  16
@@ -108,10 +109,9 @@ Table of Contents
 
 
 
-
-Kario                     Expires 20 April 2024                 [Page 2]
+Kario                      Expires 25 May 2024                  [Page 2]
 
-Internet-Draft         RSA Implementation Guidance          October 2023
+Internet-Draft         RSA Implementation Guidance         November 2023
 
 
    Unfortunately, straight-forward implementation of the RSA encryption
@@ -165,9 +165,9 @@ Internet-Draft         RSA Implementation Guidance          October 2023
 
 
 
-Kario                     Expires 20 April 2024                 [Page 3]
+Kario                      Expires 25 May 2024                  [Page 3]
 
-Internet-Draft         RSA Implementation Guidance          October 2023
+Internet-Draft         RSA Implementation Guidance         November 2023
 
 
         bbInv = bb^(-1) mod n
@@ -221,9 +221,9 @@ Internet-Draft         RSA Implementation Guidance          October 2023
 
 
 
-Kario                     Expires 20 April 2024                 [Page 4]
+Kario                      Expires 25 May 2024                  [Page 4]
 
-Internet-Draft         RSA Implementation Guidance          October 2023
+Internet-Draft         RSA Implementation Guidance         November 2023
 
 
 6.  General recommendations
@@ -277,9 +277,9 @@ Internet-Draft         RSA Implementation Guidance          October 2023
 
 
 
-Kario                     Expires 20 April 2024                 [Page 5]
+Kario                      Expires 25 May 2024                  [Page 5]
 
-Internet-Draft         RSA Implementation Guidance          October 2023
+Internet-Draft         RSA Implementation Guidance         November 2023
 
 
 7.2.  Montgomery ladder
@@ -333,9 +333,9 @@ Internet-Draft         RSA Implementation Guidance          October 2023
 
 
 
-Kario                     Expires 20 April 2024                 [Page 6]
+Kario                      Expires 25 May 2024                  [Page 6]
 
-Internet-Draft         RSA Implementation Guidance          October 2023
+Internet-Draft         RSA Implementation Guidance         November 2023
 
 
      bbInv = bb^(-1) mod n
@@ -389,9 +389,9 @@ Internet-Draft         RSA Implementation Guidance          October 2023
 
 
 
-Kario                     Expires 20 April 2024                 [Page 7]
+Kario                      Expires 25 May 2024                  [Page 7]
 
-Internet-Draft         RSA Implementation Guidance          October 2023
+Internet-Draft         RSA Implementation Guidance         November 2023
 
 
    Where b_1, b_2, ..., b_i are all uniformly selected random numbers at
@@ -445,9 +445,9 @@ Internet-Draft         RSA Implementation Guidance          October 2023
 
 
 
-Kario                     Expires 20 April 2024                 [Page 8]
+Kario                      Expires 25 May 2024                  [Page 8]
 
-Internet-Draft         RSA Implementation Guidance          October 2023
+Internet-Draft         RSA Implementation Guidance         November 2023
 
 
    The basic idea of the implicit rejection is to prepare a random but
@@ -501,9 +501,9 @@ Internet-Draft         RSA Implementation Guidance          October 2023
 
 
 
-Kario                     Expires 20 April 2024                 [Page 9]
+Kario                      Expires 25 May 2024                  [Page 9]
 
-Internet-Draft         RSA Implementation Guidance          October 2023
+Internet-Draft         RSA Implementation Guidance         November 2023
 
 
 10.2.  Implicit rejection
@@ -557,9 +557,9 @@ Internet-Draft         RSA Implementation Guidance          October 2023
 
 
 
-Kario                     Expires 20 April 2024                [Page 10]
+Kario                      Expires 25 May 2024                 [Page 10]
 
-Internet-Draft         RSA Implementation Guidance          October 2023
+Internet-Draft         RSA Implementation Guidance         November 2023
 
 
                 D = I2OSP (d, k).
@@ -613,9 +613,9 @@ Internet-Draft         RSA Implementation Guidance          October 2023
 
 
 
-Kario                     Expires 20 April 2024                [Page 11]
+Kario                      Expires 25 May 2024                 [Page 11]
 
-Internet-Draft         RSA Implementation Guidance          October 2023
+Internet-Draft         RSA Implementation Guidance         November 2023
 
 
        If the first octet of EM does not have hexadecimal value 0x00, if
@@ -644,37 +644,46 @@ Internet-Draft         RSA Implementation Guidance          October 2023
        when returning message M both EM and AM memory locations MUST be
        read.
 
-11.  Non-fixes
+11.  Safe API
+
+   Performing all actions in a way that doesn't leak the status of the
+   padding check includes the API provided to 3rd party code.  In
+   particular, if the RSA decryption implementation doesn't implement
+   implicit rejection, then all three pieces of information: the padding
+   check, the length of returned message, and the value of the message
+   are sensitive information, useful in mounting an attack.  As such,
+   any API that returns an error in substantially different manner than
+   a successful decryption (e.g. raising an exception, returning a null
+   pointer, returning a different type of structure) is vulnerable to
+   side-channel attacks.
+
+12.  Non-fixes
 
    While there are infinite ways to implement those algorithms
    incorrectly few common ideas to work-around side-channel attacks are
    repeated.  We list few of them as examples of approaches that don't
    work and thus MUST NOT be used.
 
-11.1.  Random delays
+
+
+
+
+
+Kario                      Expires 25 May 2024                 [Page 12]
+
+Internet-Draft         RSA Implementation Guidance         November 2023
+
+
+12.1.  Random delays
 
    <<describe that adding random delays doesn't work>>
 
-11.2.  Returing random value from API
+12.2.  Returing random value from API
 
    <<describe why returning a random message, even of user-specified
    length is not a universal solution>>
 
-
-
-
-
-
-
-
-
-
-Kario                     Expires 20 April 2024                [Page 12]
-
-Internet-Draft         RSA Implementation Guidance          October 2023
-
-
-12.  Deprecated Algorithms
+13.  Deprecated Algorithms
 
    Current protocol deployments MUST NOT use encryption with RSAES-PKCS-
    v1_5 padding.  Support for RSAES-PKCS-v1_5 SHOULD be disabled in
@@ -682,25 +691,25 @@ Internet-Draft         RSA Implementation Guidance          October 2023
    new protocols MUST NOT specify RSAES-PKCS-v1_5 as a valid encryption
    padding for RSA keys.
 
-13.  IANA Considerations
+14.  IANA Considerations
 
    This memo includes no request to IANA.
 
-14.  Security Considerations
+15.  Security Considerations
 
    This whole document specifies security considerations for RSA
    implementations.
 
-15.  References
+16.  References
 
-15.1.  Normative References
+16.1.  Normative References
 
    [RFC8017]  Moriarty, K., Ed., Kaliski, B., Jonsson, J., and A. Rusch,
               "PKCS #1: RSA Cryptography Specifications Version 2.2",
               RFC 8017, DOI 10.17487/RFC8017, November 2016,
               <https://www.rfc-editor.org/info/rfc8017>.
 
-15.2.  Informative References
+16.2.  Informative References
 
    [Aciicmez05]
               Acıiçmez, O., Schindler, W., and Ç. K. Koç, "Improving
@@ -708,6 +717,18 @@ Internet-Draft         RSA Implementation Guidance          October 2023
               implementations", Proceedings of the 12th ACM conference
               on Computer and communications security CCS '05, 2005,
               <https://doi.org/10.1145/1102120.1102140>.
+
+
+
+
+
+
+
+
+Kario                      Expires 25 May 2024                 [Page 13]
+
+Internet-Draft         RSA Implementation Guidance         November 2023
+
 
    [Aciicmez07]
               Acıiçmez, O. and W. Schindler, "A Major Vulnerability in
@@ -721,14 +742,6 @@ Internet-Draft         RSA Implementation Guidance          October 2023
               Demonstration on OpenSSL", Lecture Notes in Computer
               Science vol 4964, 2007,
               <https://doi.org/10.1007/978-3-540-79263-5_16>.
-
-
-
-
-Kario                     Expires 20 April 2024                [Page 13]
-
-Internet-Draft         RSA Implementation Guidance          October 2023
-
 
    [Bauer12]  Bauer, S., "Attacking Exponent Blinding in RSA without
               CRT", Lecture Notes in Computer Science vol 7275, 2012,
@@ -765,6 +778,14 @@ Internet-Draft         RSA Implementation Guidance          October 2023
               Notes in Computer Science vol 1109, 1996,
               <https://doi.org/10.1007/3-540-68697-5_9>.
 
+
+
+
+Kario                      Expires 25 May 2024                 [Page 14]
+
+Internet-Draft         RSA Implementation Guidance         November 2023
+
+
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
               DOI 10.17487/RFC2119, March 1997,
@@ -774,17 +795,6 @@ Internet-Draft         RSA Implementation Guidance          October 2023
               (TLS) Protocol Version 1.2", RFC 5246,
               DOI 10.17487/RFC5246, August 2008,
               <https://www.rfc-editor.org/info/rfc5246>.
-
-
-
-
-
-
-
-Kario                     Expires 20 April 2024                [Page 14]
-
-Internet-Draft         RSA Implementation Guidance          October 2023
-
 
    [RFC6979]  Pornin, T., "Deterministic Usage of the Digital Signature
               Algorithm (DSA) and Elliptic Curve Digital Signature
@@ -825,6 +835,13 @@ A.1.  2048 bit key
    see also: https://github.com/tlsfuzzer/tlslite-
    ng/blob/master/unit_tests/test_tlslite_utils_rsakey.py#L1694
 
+
+
+Kario                      Expires 25 May 2024                 [Page 15]
+
+Internet-Draft         RSA Implementation Guidance         November 2023
+
+
    proposed test vectors:
 
    Otherwise valid, but with wrong first byte of plaintext
@@ -834,13 +851,6 @@ A.1.  2048 bit key
    Otherwise valid, but with PS of 7 bytes
 
    Otherwise valid, but with PS of 0 bytes
-
-
-
-Kario                     Expires 20 April 2024                [Page 15]
-
-Internet-Draft         RSA Implementation Guidance          October 2023
-
 
    Otherwise valid, but with the message separator byte missing
 
@@ -883,14 +893,4 @@ Author's Address
 
 
 
-
-
-
-
-
-
-
-
-
-
-Kario                     Expires 20 April 2024                [Page 16]
+Kario                      Expires 25 May 2024                 [Page 16]
