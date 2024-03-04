@@ -14,14 +14,14 @@
 <?rfc symrefs="yes"?>
 <!-- use symbolic references tags, i.e, [RFC2119] instead of [1] -->
 <?rfc sortrefs="yes" ?>
-<!-- control vertical white space 
+<!-- control vertical white space
      (using these PIs as follows is recommended by the RFC Editor) -->
 <?rfc compact="yes" ?>
 <!-- do not start each main section on a new page -->
 <?rfc subcompact="no" ?>
 <!-- keep one blank line between list items -->
 <!-- end of list of popular I-D processing instructions -->
-<rfc category="info" docName="draft-kario-rsa-guidance-02" ipr="trust200902"
+<rfc category="info" docName="draft-irtf-cfrg-rsa-guidance-00" ipr="trust200902"
     updates="8017">
   <!-- ***** FRONT MATTER ***** -->
 
@@ -29,7 +29,7 @@
       <title abbrev="RSA Implementation Guidance">Implementation Guidance for
       the PKCS #1 RSA Cryptography Specification</title>
 
-    <author fullname="Hubert Kario" initials="H." role="editor"
+    <author fullname="Hubert Kario" initials="H."
             surname="Kario">
       <organization>Red Hat, Inc.</organization>
 
@@ -52,7 +52,7 @@
       </address>
     </author>
 
-    <date day="22" month="November" year="2023" />
+    <date day="04" month="March" year="2024" />
 
     <area>General</area>
 
@@ -163,6 +163,9 @@
 
             <dt>b_i</dt>
             <dd><t>an exponent blinding factor for i-th prime,
+                non-negative integer.</t></dd>
+            <dt>g_i</dt>
+            <dd><t>a modulus blinding factor for the i-th prime,
                 non-negative integer.</t></dd>
         </dl>
     </section>
@@ -286,12 +289,12 @@
         <t>Compute multiplicative inverse of bb modulo n.
             <figure><artwork>
   bbInv = bb^(-1) mod n
-                    </artwork></figure></t>
+            </artwork></figure></t>
         <t>In the RSADP() operation, after performing step 1, multiply c
             by bb mod n. Use the result as new c for all the remaining
             operations.</t>
         <t>Before returning the value m in step 3, multiply it by bbInv mod n.
-    </t>
+            </t>
         <t>Note: multiplication by bbInv and reduction modulo n MUST be
             performed using side-channel free code with respect to
             value m.</t>
@@ -342,6 +345,27 @@
             attacks<xref target="Bauer12"/><xref target="Schindler11"/>.</t>
         <t>The b_1, b_2, ..., b_i factors MUST NOT be reused for multiple
             RSADP() operations.</t>
+    </section>
+
+    <section title="Modulus blinding">
+        <t>To protect against private key leaks, it's RECOMMENDED
+           to perform blinding of the used modulus values in the CRT
+           implementations.</t>
+        <t>When the key is in the first form, the pair (n, d), then
+           the used modulus is public, thus no blinding is necessary.</t>
+        <t>If the key is in the second form, the quintuple (p, q, dP, dQ, qInv)
+            with the optional sequence f triplets (r_i, d_i, t_i), i = 3, ...,
+            u, then each modulus used MUST be blinded individually.</t>
+        <list style="numbers">
+            <t>The m_1 = c^dP mod (g_1 * p)</t>
+            <t>The m_2 = c^dQ mod (g_2 * q)</t>
+            <t>If u > 3, then m_i = c^d_i mod (g_3 * r_i)</t>
+        </list>
+        <t>Where g_1, g_2, ..., g_i are all uniformely selected random number
+           at least 64 bits long (or at least 2 machine word sizes, whicher
+           is greater).</t>
+       <t>Before step 3 of the original algorithm, reduce the returned
+          value m mod n.</t>
     </section>
 
     <section title="Depadding">
@@ -563,12 +587,57 @@
         don't work and thus MUST NOT be used.</t>
 
         <section title="Random delays">
-            <t>«describe that adding random delays doesn't work»</t>
+            <t>Commonly proposed workaround for timing attacks is to add
+                a random delay to procesing of encrypted data.
+                For such mitigation to be effective in practice
+                (raise attacker's work factor to gain meaningful safety
+                margin) it would need to be in the order of at least
+                few seconds if not tens of seconds. Effective sizes and
+                distributions of delays have not been subject of extensive
+                study.
+            </t>
+            <t>It should also be noted that such a delay would need to be
+                applied in addition to the regular mitigation (generate random
+                key, use it in case RSAES-PKCS-v1_5 padding checks).
+                That is, it needs to be implemented in the calling code, not
+                in the depaddng code.
+            </t>
+            <t>At the same time, performing a simple wait masks only the
+                timing side channel. It doesn't mitigate other side-channels,
+                like ones that depend on power usage or memory access pattern.
+            </t>
         </section>
 
         <section title="Returing random value from API">
-            <t>«describe why returning a random message, even of
-            user-specified length is not a universal solution»</t>
+            <t>A simpler variant of the proposed implicit rejection
+               algorithm, where the decryption API returns a random
+               message in case the padding check fails or the decrypted
+               message has unexpected length, as decribed in
+               <xref target="RFC5246"/>, isn't a universal mitigation.</t>
+            <t>In case of a Bleichenbacher like attack, the attacker is
+               trying to differentiate two classes of ciphertexts:
+               ones that decrypt to message of specific size
+               and ones that have invalid padding or decrypt to a message
+               of unexpected size. That translates to two kind of values
+               being returned to calling code: either the same
+               message always for every decryption, or a different
+               message for every decryption.</t>
+            <t>If that message is later used in any operation that
+               is not side-channel free (key derivation, symmetric padding
+               removal, message parsing), then the attacker will be able
+               to observe two kinds of behaviour: consistent one
+               for static messages and erratic one for randomly generated
+               messages.</t>
+            <t>Use of such a message as a key with block cipher modes
+               that require padding, like AES-CBC with PKCS #7 padding,
+               is particularly leaky as it has about 1 in 256 chance of
+               successful decryption with random key.</t>
+            <t>The simple implicit rejection with random message may be
+               implemented safely in TLS 1.2 because both static messages
+               and randomly generated messages are mixed together
+               with the random nonce generated by the server, thus the
+               attacker is unable to differentiate if the randomness originates
+               in the nonce or in the randomisation of the message.</t>
         </section>
     </section>
 
@@ -819,19 +888,19 @@
     <section anchor="test-vectors" title="Test Vectors">
         <section title="2048 bit key">
             <t>«provide test vectors here»</t>
-            <t>see also: https://github.com/tlsfuzzer/tlslite-ng/blob/master/unit_tests/test_tlslite_utils_rsakey.py#L1694</t>
+            <t>see also: https://github.com/tlsfuzzer/tlslite-ng/blob/master/unit_tests/test_tlslite_utils_rsakey.py#L1694 or OpenSSL 3.2.0.</t>
             <t>proposed test vectors:</t>
             <t>Otherwise valid, but with wrong first byte of plaintext</t>
             <t>Otherwise valid, but with padding type specifying signature</t>
             <t>Otherwise valid, but with PS of 7 bytes</t>
             <t>Otherwise valid, but with PS of 0 bytes</t>
             <t>Otherwise valid, but with the message separator byte missing</t>
-            <t>invalid ciphertext that decrypts to a synthehic message of
+            <t>Invalid ciphertext that decrypts to a synthehic message of
                maximum size</t>
-            <t>invalid ciphertext that decrypts to a 0-bytes long message</t>
-            <t>invalid ciphertext that needs to use the second-to-last
+            <t>Invalid ciphertext that decrypts to a 0-bytes long message</t>
+            <t>Invalid ciphertext that needs to use the second-to-last
                synthethic length for the returned message</t>
-            <t>valid ciphertext that starts with a zero byte</t>
+            <t>Valid ciphertext that starts with a zero byte</t>
 
         </section>
         <section title="2049 bit key">
