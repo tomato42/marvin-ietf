@@ -476,7 +476,7 @@
               <list style="numbers">
                 <t>Derive the Key Derivation Key (KDK)
                 <list style="letters">
-                    <t>Convert the private expoent d to a string of length
+                    <t>Convert the private exponent d to a string of length
                        k octets:
                       <figure><artwork>
   D = I2OSP (d, k).
@@ -600,7 +600,7 @@
                 applied in addition to the regular mitigation (generate random
                 key, use it in case RSAES-PKCS-v1_5 padding checks).
                 That is, it needs to be implemented in the calling code, not
-                in the depaddng code.
+                in the depadding code.
             </t>
             <t>At the same time, performing a simple wait masks only the
                 timing side channel. It doesn't mitigate other side-channels,
@@ -612,7 +612,7 @@
             <t>A simpler variant of the proposed implicit rejection
                algorithm, where the decryption API returns a random
                message in case the padding check fails or the decrypted
-               message has unexpected length, as decribed in
+               message has unexpected length, as described in
                <xref target="RFC5246"/>, isn't a universal mitigation.</t>
             <t>In case of a Bleichenbacher like attack, the attacker is
                trying to differentiate two classes of ciphertexts:
