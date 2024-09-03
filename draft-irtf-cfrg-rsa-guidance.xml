@@ -29,7 +29,7 @@
       <title abbrev="RSA Implementation Guidance">Implementation Guidance for
       the PKCS #1 RSA Cryptography Specification</title>
 
-    <author fullname="Hubert Kario" initials="H."
+    <author fullname="Alicja Kario" initials="A."
             surname="Kario">
       <organization>Red Hat, Inc.</organization>
 
@@ -52,7 +52,7 @@
       </address>
     </author>
 
-    <date day="04" month="March" year="2024" />
+    <date day="03" month="September" year="2024" />
 
     <area>General</area>
 
