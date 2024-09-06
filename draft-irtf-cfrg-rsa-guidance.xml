@@ -641,6 +641,12 @@
         </section>
     </section>
 
+    <section title="Key generation">
+        <t>There exist multiple attacks against the generation of the
+            parameters used in the RSA cryptosystem. Those are considered
+            to be outside the scope of this document.</t>
+    </section>
+
     <section title="Deprecated Algorithms">
         <t>Current protocol deployments MUST NOT use
             encryption with RSAES-PKCS-v1_5 padding.
