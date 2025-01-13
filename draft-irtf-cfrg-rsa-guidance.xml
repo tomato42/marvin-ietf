@@ -608,7 +608,7 @@
             </t>
         </section>
 
-        <section title="Returing random value from API">
+        <section title="Returning random value from API">
             <t>A simpler variant of the proposed implicit rejection
                algorithm, where the decryption API returns a random
                message in case the padding check fails or the decrypted
