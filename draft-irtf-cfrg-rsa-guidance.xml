@@ -1903,9 +1903,26 @@ e2e9b49798a9b98aa1c1c233f938937c88ad675e6297f36ba0fb161a8b42e9ee
                     is too long for this key size.</t>
                 <t>Hex encoded ciphertext:</t>
                 <sourcecode type="test-vectors"><![CDATA[
+09f010936fd77967dd2aa090be72ecdd8cb2b2a9fb954e644f08a1c1fd545000
+7ece0b4e8e992831534309419c034b1c4b369269b808a890eac31d5bbfe73737
+fd716e117e19638064292539e84dae20ec1d98ecd104e6c88d39d3544d5c43c9
+fd4e9f4361c67116516fc2569f96e5df50a63e949d92009a7c865c7dd70ea89c
+0002dd697dcd0e0304f8fa0738a3681322e672a9748f9d9eb1b7b8c1646a7bf2
+a1967b2aa9793ae0ecdbaa2d601350fd931ea164bc02a33a9c22cee47f2d536d
+92e465180b44e310bf044eec49cc54972d22e735123fbee76496a4c768acef89
+66ae9e0ed46b753ec47e20a89af0ccf78c266aeb63aeb99d80e4c34bc4608e16
+4aeffd93e886accd426e9e1cfee4f912f235940a9b8d4554953bee8753b8fe05
+606fe5f46da70394b10f7e71dba3c10becf85a1f4ee619d421ef69fca837d8b1
+b42598dea0232668b9c42223d77bae7fbe79a9dbf057eeaa51fceac114661a3b
+572130776c36cfff9f134b08907ab2a6f927145806a779bc55bfb4215cb8c85d
+ecaec5b15cd0a4be691b13e068a2381c33fb5adbdb564fd8be0938fdd710590c
+08f95aa4ea90cc2cea195ef7a344e14715beff2186ad7d898e8f904861ab9133
+817a13d8a6af23f83a89e5e1e7f8e163d6190e91a09c11939e3a7d48990b8e3b
+5c0e01b773ba683f7df73b2f88746593c010cd9cab2ea3d9af5ebf30fba1ef0c
 ]]></sourcecode>
                 <t>Hex encoded decrypted message:</t>
                 <sourcecode type="test-vectors"><![CDATA[
+0cfdf702efa4dc6bc686
 ]]></sourcecode>
             </section>
             <section>
