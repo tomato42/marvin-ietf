@@ -1020,6 +1020,26 @@ a3bea5e7e4a1c359772fb6b1c6e6c516661dfe30c3
 ]]></sourcecode>
             </section>
             <section>
+                <name>Invalid with null padded ciphertext</name>
+                <t>Ciphertext that decrypts to an invalid plaintext,
+                    with the ciphertext starting with a zero byte</t>
+                <t>Hex encoded ciphertext:</t>
+                <sourcecode type="test-vectors"><![CDATA[
+006f89db685c0a132700c6a17f88a37a6635d0ab89de4c45dc09736c891ca5bf
+3401ce34c6e5d51e94ed2f518857ddc12d9f9f9e68e01cdc30d86ae5dd83988c
+0c46a8e39daa1b328a23def551d67fa1964fb15242c83ddd7dd5b1aec720a391
+d0b86cb16cf4d3c466850c3df88a3ed85993900d1287a0c90c4b04d34ba29e59
+967661f3f10e0c998f64e14e777e8e81371eca5318b4e0b53414292130c82147
+7c51e2bff844836ab10dff293d82e4f40d345968ef268c92ed0bc238f31d50f4
+d3f759c23964923e135d15527556410fbd2c451d6a2aa852dc88b01139c6fdd8
+26736d8cd3780601b2977b09c080bd8c0fa471606ad59f053ad33d9eeb905f20
+]]></sourcecode>
+                <t>Hex encoded decrypted message:</t>
+                <sourcecode type="test-vectors"><![CDATA[
+2b5dd72df3cae37f1aef
+]]></sourcecode>
+            </section>
+            <section>
                 <name>Invalid with second to last length</name>
                 <t>The length of the synthetic message comes from second
                     to last value from the PRF output as the last value
@@ -1267,6 +1287,27 @@ fb77a373a82dabbc8233e585ea5ddfef3d0d872a4a007018005014a887349595
 1210a4b90209b8286466030e56b1050ed600c777b4dbdb64f86516ef269a3ba7
 7285f9be9afebcaad35226f7b3296932baf8dbfea3d77eb6520da203ffc06722
 32761e2a8a05186181b8dd1f77f069f7af8de118aa18
+]]></sourcecode>
+            </section>
+            <section>
+                <name>Invalid with null padded ciphertext</name>
+                <t>Ciphertext that decrypts to an invalid plaintext,
+                    with the ciphertext starting with a zero byte</t>
+                <t>Hex encoded ciphertext:</t>
+                <sourcecode type="test-vectors"><![CDATA[
+000a56cfd7abf21e2c65a28b8145fee663818b6cd218601e9e62bed7de5ac74c
+eb07b435b305c99e3e286152036086b4a13eb26164f6f4bf79ac7d6c3fbcdcd7
+4c6dc324c04949a0c88cbf616626cb171a4e333a0e124524b44f78e2d8100c03
+e231791523b7d76db2d464e6b5e64244e04ad21128a5feb56092b4ceda35ebfb
+84f7fafa8e1c098d9923d66e541b36307574db8912630fcf734af7bcd4118f1f
+700804c5001a5950780188fc7862384fb3fc0708eaf3cb2b119177bb6928758f
+a75e644d258ac02748dcae7a78ec6c8679598fa9deee4663f1efe27efe8bd155
+72ff40676b95469aaa42eab4226d86c1160343255cce4fb7728f7349da27ed09
+6b
+]]></sourcecode>
+                <t>Hex encoded decrypted message:</t>
+                <sourcecode type="test-vectors"><![CDATA[
+fc874af235e261083c2c
 ]]></sourcecode>
             </section>
             <section>
@@ -1554,6 +1595,30 @@ b481a08176102fc803fbb2f8ad11b0e1531bd37df543498daf180b12017f4d4d
 2af3c1336104afb537d01a8f70b510e1eebf4869cb976c419473795a66c7f5e6
 e20a8094b1bb603a74330c537c5c0698c31538bd2e138c1275a1bdf24c5fa8ab
 3b7b526324e7918a382d1363b3d463764222150e04
+]]></sourcecode>
+            </section>
+            <section>
+                <name>Invalid with null padded ciphertext</name>
+                <t>Ciphertext that decrypts to an invalid plaintext,
+                    with the ciphertext starting with a zero byte</t>
+                <t>Hex encoded ciphertext:</t>
+                <sourcecode type="test-vectors"><![CDATA[
+00128e116c0d348217c1d5756611be833caec3bd19f3d2ed383c4523ef3d8a5c
+d1130bdb3fcd3ba1c0265322fc98c767b3b971054f5e3067a32b4878bbf7e17d
+b80a855427e2e7d2ec26294b79edbb6352c7812270040e3cbaf560de1486171d
+a649af786551ae0e5b6ef1fa1e22196c1c3039a50cfe09620da09716e75e9a9b
+5ad164953c5a7e48f77ef9e0f59e962cf3985dc572ded966e8241632a9a5a420
+3500a50d70491d80846b72019c456bfbdf7f15f740af0c2ef2a46787c54dcd90
+a0e91257642f2c10b21052024b1d28ad14d78c0d9702a14b9ab9552f023bfb71
+6f9c9a1f691959057f52b197086fb9bc24d45e2b063ffb235b54d3ab7575c7f3
+e411398ddb30945c15f3f5d5ebbe302f22f60047d139d402f5b8a959421d1946
+cf748c84065c5d0f0302f7ade6335014ab4467698ad827684d2bdeeb4757d276
+f131340438506473f271c3fe24ca58e1c60dcc17aff8b0373637d897f627ea57
+1da148a81d399ced9d65a4564bb6d23fbf4c14674d7551283a4293de51a1516a
+]]></sourcecode>
+                <t>Hex encoded decrypted message:</t>
+                <sourcecode type="test-vectors"><![CDATA[
+732f025d1adea74649b4
 ]]></sourcecode>
             </section>
             <section>
@@ -1894,6 +1959,34 @@ cb43fc2182e4d341c610e6860904cbc526e74292aa1df81dd08d87b51a953c0b
 e511346d604aa3a8e87f943db3e951a69cc4dcd1b996d3d8ab595aa9b7ca591a
 e2e9b49798a9b98aa1c1c233f938937c88ad675e6297f36ba0fb161a8b42e9ee
 9a98d8b781165ed75d30cc55d88e6df5c688c32390
+]]></sourcecode>
+            </section>
+            <section>
+                <name>Invalid with null padded ciphertext</name>
+                <t>Ciphertext that decrypts to an invalid plaintext,
+                    with the ciphertext starting with a zero byte</t>
+                <t>Hex encoded ciphertext:</t>
+                <sourcecode type="test-vectors"><![CDATA[
+00cd3bf408c742514e30ebfd001708e01f42de439a09d0d4b10044628becd8bc
+690c45b967a6a900d6259c7d7d20ad49810c270d2fe1b75ffaa84f50071f64d1
+696bce76e96dbcf2af054d77ded54c742aa38fadba52eebf7a5c8b6dbbf01f28
+b3ebf4e9b3ca453c92ca8b65771c23671b9da85c51e7a2987395de45b125353d
+430820b4c90b0ab9fc29e1c576a0ec35828c99c9880e208ecddf80bdaa9c3474
+561e4c5bf67bf5d144b173f4f28edd1064a9dd8cf5f40b7c35e7e4dbeb370cca
+bf06efb54e243645b902871a804c27904a620f31ef321af4d1589ca359de8895
+24dfb43ddad51ab50617ab79a50a2d20e2325a05c9963602f2a1d7feaffc80d2
+b8b88cbd3673531c399342f0bf1c04521d9a441c06593d9e95771129da942d83
+bb81c627a50c8baafc2a731d97f2e1f638217f9f7b18f2644578fde5073a54a8
+988fda357c64398a95965a7dd35ffdd7eb7495d4d1c9a950a0cd208a68371829
+420633cb25e9da9e22b215e50f6ec2714f94ce6abb9a94fbbf6cd18f2fd5bfb7
+8076034b88186957428fe0ea5e1dec7be31d753f155e2a8f7f4854a726612f43
+ef91f88124011cd32f6841a347dc0411d708db65492ec277b81a335b76a86230
+2acebf7db7cac724144c975ed4d91412eeec4cac3b2409696e3678cffcb7756b
+de795c55f72da44f325b71dd6ac4e3c1ef512ee8ff24ab316507c6ac60031569
+]]></sourcecode>
+                <t>Hex encoded decrypted message:</t>
+                <sourcecode type="test-vectors"><![CDATA[
+59ccd9c2cfe740e9287b
 ]]></sourcecode>
             </section>
             <section>
