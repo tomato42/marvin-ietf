@@ -893,7 +893,8 @@
 
     <section anchor="test-vectors" title="Test Vectors">
         <section title="2048 bit key">
-            <t>«for verification of test vectors see: https://github.com/tlsfuzzer/tlslite-ng/blob/master/unit_tests/test_tlslite_utils_rsakey.py#L1694»</t>
+            <t>Test vectors with a RSA key with a 2048 bit modulus.</t>
+            <t>[Note to RFC Editor: please remove this paragraph] For verification of test vectors see: https://github.com/tlsfuzzer/tlslite-ng/blob/master/unit_tests/test_tlslite_utils_rsakey.py#L1694»</t>
             <section>
                 <name>Private key</name>
                 <t>Private key to use for decryption of following test data</t>
