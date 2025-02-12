@@ -111,9 +111,14 @@
         implementations struggle with
         <xref target="Bock18"/><xref target="Kario23"/>.
         </t>
-        <t>We thus provide guidance how to implement those algorithms
-        in a way that should be secure against at least the simple timing
-        side channel attacks.
+        <t>We provide general guidance to implementers of the RSA cryptosystem
+        for protections against side-channel attacks, irrespective of
+        padding scheme used.
+        We also call for complete deprecation of the RSAES-PKCS-v1_5
+        scheme in any deployments or protocols. For legacy use cases
+        that cannot remove use of the RSAES-PKCS-v1_5 scheme we provide
+        guidance how to implement it in a way that should be secure against
+        at least the simple timing side channel attacks.
         </t>
     </section>
 
@@ -182,7 +187,7 @@
             <t>Different processing times of operations</t>
             <t>Different patterns of jump instructions and memory accesses</t>
             <t>Use of hardware instructions that take different amount
-               time to execute depending on operands or result</t>
+               of time to execute depending on operands or result</t>
        </list>
        </t>
        <t>Some of those leaks may be detectable over the network, while
@@ -198,6 +203,11 @@
           of the side-channel.
        </t>
     </section>
+
+    <section title="General RSA operations">
+        <t>This section describes considerations for all padding modes
+        that use private key operation: signing, decryption, or decapsulation.
+        </t>
 
     <section title="General recommendations">
         <t>As a general rule, all operations that process secret information
@@ -262,7 +272,8 @@
           and multiply always algorithm. In such case, the implementation
           needs to make sure that memory locations of both the result of the
           squaring operation and of the multiplication are accessed when
-          preparing the variable for the next step of the algorithm.</t>
+          preparing the variable for the next step of the algorithm,
+          irrespective of the exponent bit.</t>
         </section>
         <section title="Montgomery reduction in multiplication">
             <t>As multiplication operations quickly make the intermediate
@@ -371,6 +382,7 @@
            is greater).</t>
        <t>Before step 3 of the original algorithm, reduce the returned
           value m mod n.</t>
+    </section>
     </section>
 
     <section title="Depadding">
@@ -611,27 +623,32 @@
     </section>
 
     <section title="Safe API">
-        <t>Performing all actions in a way that doesn't leak the status
+        <t>Any API that returns an error in RSAES-PKCS-v1_5 padding check in
+        substantially
+        different manner than a successful decryption (e.g. raising
+        an exception, returning a null pointer, returning a different
+        type of structure) is vulnerable to side-channel attacks.
+        Performing all actions in a way that doesn't leak the status
         of the padding check includes the API provided to 3rd party code.
         In particular, if the RSA decryption implementation doesn't
         implement implicit rejection, then all three pieces of information:
         the padding check, the length of returned message, and the value
         of the message are sensitive information, useful in mounting an
-        attack. As such, any API that returns an error in substantially
-        different manner than a successful decryption (e.g. raising
-        an exception, returning a null pointer, returning a different
-        type of structure) is vulnerable to side-channel attacks.</t>
+        attack.</t>
     </section>
 
-    <section title="Non-fixes">
+    <section title="Common Pitfalls">
         <t>While there are infinite ways to implement those algorithms
-        incorrectly few common ideas to work-around side-channel attacks
-        are repeated. We list few of them as examples of approaches that
+        incorrectly, few ideas to work-around side-channel attacks
+        are often repeated. We list few of them as examples of approaches that
         don't work and thus MUST NOT be used.</t>
 
         <section title="Random delays">
             <t>Commonly proposed workaround for timing attacks is to add
                 a random delay to procesing of encrypted data.
+                This is unlikely to be successful, as the statistical
+                methods used to detect presence of the differences inherently
+                filter out noise in measurements.
                 For such mitigation to be effective in practice
                 (raise attacker's work factor to gain meaningful safety
                 margin) it would need to be in the order of at least
@@ -666,7 +683,8 @@
                message always for every decryption, or a different
                message for every decryption.</t>
             <t>If that message is later used in any operation that
-               is not side-channel free (key derivation, symmetric padding
+               is not side-channel free (key derivation, symmetric encryption
+               padding
                removal, message parsing), then the attacker will be able
                to observe two kinds of behaviour: consistent one
                for static messages and erratic one for randomly generated
@@ -678,7 +696,8 @@
             <t>The simple implicit rejection with random message may be
                implemented safely in TLS 1.2 because both static messages
                and randomly generated messages are mixed together
-               with the random nonce generated by the server, thus the
+               with the random nonce generated by the server (the "random"
+               field in the ServerHello message), thus the
                attacker is unable to differentiate if the randomness originates
                in the nonce or in the randomisation of the message.</t>
         </section>
@@ -697,6 +716,9 @@
             configuration of any implementation of RSA cryptosystem.
             All new protocols MUST NOT specify RSAES-PKCS-v1_5 as a valid
             encryption padding for RSA keys.</t>
+        <t>The RSAES-PKCS-v1_5 padding MUST NOT be supported in any part of
+            online
+           (network-accessible) protocols or API endpoints.</t>
     </section>
 
     <!-- Possibly a 'Contributors' section ... -->
@@ -950,12 +972,13 @@
     </references>
 
     <section title="Acknowledgments">
-        <t>I would like to thank Stefan Berger for the discussions that led
+        <t>We would like to thank Stefan Berger for the discussions that led
         to the development of the implicit rejection algorithm.
-        I'd like to thank to all the people that provided feedback to the
+        We'd like to thank to all the people that provided feedback to the
         document in the CFRG mailing list.
         </t>
-        <t>I also thank Scott Fluhrer for the detailed review and notes.</t>
+        <t>We also thank Scott Fluhrer and Jon Callas for the detailed review
+            and notes.</t>
     </section>
 
     <section anchor="test-vectors" title="Test Vectors">
