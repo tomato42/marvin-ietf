@@ -219,11 +219,11 @@
 
     <section title="Side-channel free modular exponentiation">
         <t>The underlying modular exponentiation algorithm MUST be
-           constant time with regards to the exponent in all uses of the
-           private key.</t>
+           constant time with regards to the exponent both for private key
+           decryption and signing using the private key.</t>
        <t>For private key decryption the modular exponentiation algorithm
-       MUST be constant time with regards to the output of the
-           exponentiation.</t>
+            MUST be constant time with regards to the output of the
+            exponentiation.</t>
        <t>In case the Chinese remainder theorem optimisation is used the
         modular exponentiation algorithm must also be constant time
            with regards to the used moduli.</t>
@@ -249,7 +249,7 @@
             through lack of multiplication operation in individual
             exponentiation steps.</t>
         <t>The recommended workaround against it, is the use of the
-            Montgomery ladder construction.</t>
+            Montgomery ladder construction<xref target="Montgomery87"/>.</t>
         <t>While that approach ensures that both the square and multiply
         operations are performed, the fact that the results of them are
         placed in different memory locations based on bits of the secret
@@ -258,6 +258,11 @@
         the implementation should ensure that both memory locations
         are accessed and updated on every step.
         </t>
+        <t>Alternatively, it's possible to implement it using the square
+          and multiply always algorithm. In such case, the implementation
+          needs to make sure that memory locations of both the result of the
+          squaring operation and of the multiplication are accessed when
+          preparing the variable for the next step of the algorithm.</t>
         </section>
         <section title="Montgomery reduction in multiplication">
             <t>As multiplication operations quickly make the intermediate
@@ -330,7 +335,7 @@
         <list style="numbers">
             <t>The m_1 = c^(dP + b_1 * phi(p)) mod p</t>
             <t>The m_2 = c^(dQ + b_2 * phi(q)) mod q</t>
-            <t>If u > 3, then m_i = c^(d_i + b_i * phi(r_i)) mod (r_i)</t>
+            <t>If u > 2, then m_i = c^(d_i + b_i * phi(r_i)) mod (r_i)</t>
         </list>
         <t>Where b_1, b_2, ..., b_i are all uniformly selected random numbers
             at least 64 bits long (or at least 2 machine word sizes, whichever
@@ -359,7 +364,7 @@
         <list style="numbers">
             <t>The m_1 = c^dP mod (g_1 * p)</t>
             <t>The m_2 = c^dQ mod (g_2 * q)</t>
-            <t>If u > 3, then m_i = c^d_i mod (g_3 * r_i)</t>
+            <t>If u > 2, then m_i = c^d_i mod (g_3 * r_i)</t>
         </list>
         <t>Where g_1, g_2, ..., g_i are all uniformely selected random number
            at least 64 bits long (or at least 2 machine word sizes, whicher
@@ -565,6 +570,44 @@
              memory locations MUST be read.</t>
         </list>
         </section>
+        <section title="Security analysis">
+          <t>The resons for this solution being secure and safe to deploy
+            are multi-layered, but they boil down to three things:
+            the sizes of returned messages, the hiding of the padding
+            check result, and the determinism of the decryption.</t>
+          <t>First, let's consider an API that requires that the decrypted
+            messages are keys of specific size, then an algorithm that may
+            return various message lengths may look as a problem.
+            But, if the calling code cannot handle unexpected lengths, then
+            the attacker can simply exploit it by encrypting those sizes
+            directly, they don't need to resort to performing a Bleichenbacher
+            attack. As such, the algorithm doesn't create any new attack
+            vector.</t>
+          <t>Secondly, for protection against the Bleichenbacher attack
+            we need to hide the information if the decrypted plaintext
+            (the result of applying the RSADP() primitive) starts with
+            specific bytes. The classical oracle for that, is the use
+            of the RSAES-PKCS-v1_5 padding check: accepted ciphertexts
+            definitely start with bytes 0x00 0x02. By making the
+            decryption call always return a message the attacker can't
+            easily differentiate plaintexts starting with specific bytes
+            from ones that do not just by presence of an error in decryption.
+            </t>
+          <t>Thirdly, when performing the actual Bleichenbacher attack
+            (when generating ciphertexts according to the attack), the
+            attacker doesn't know if any particular ciphertext decrypts to
+            a message or not. But crucially, if the ciphertext, by chance,
+            decrypts to a plaintext that is correctly formatted according
+            to RSAES-PKCS-v1_5 padding, then that particular ciphertext
+            will always decrypt to that message. If an implementation would
+            return random messages in case of padding check failure, then
+            further processing of them might reveal if those messages are
+            always the same or always different. For example, using them
+            as keys for AES-128-CBC with PKCS #7 padding will cause that
+            padding check to randomly pass. By making the returned
+            message unpredictable but deterministic, we remove the ability
+            for the attacker to tell if the padding check passed or not.</t>
+        </section>
     </section>
 
     <section title="Safe API">
@@ -673,7 +716,6 @@
 
   <back>
     <!-- References split into informative and normative -->
-
 
     <references title="Normative References">
 
@@ -811,8 +853,8 @@
            <author fullname="Werner Schindler"/>
            <author fullname="Çetin K. Koç"/>
            <date year="2005"/>
-        </front>
-        <seriesInfo
+         </front>
+         <seriesInfo
             name="Proceedings of the 12th ACM conference on Computer and communications security"
             value="CCS '05"/>
       </reference>
@@ -889,7 +931,32 @@
           value=""/>
       </reference>
 
+      <!-- algorithms -->
+
+      <reference
+          anchor="Montgomery87"
+          target="https://doi.org/10.2307%2F2007888">
+        <front>
+          <title>Speeding the Pollard and elliptic curve methods of factorization</title>
+          <author fullname="Peter L. Montgomery"/>
+          <date year="1987"/>
+        </front>
+        <seriesInfo
+            name="Mathematics of Computation"
+            value="vol 48"/>
+      </reference>
+
+
     </references>
+
+    <section title="Acknowledgments">
+        <t>I would like to thank Stefan Berger for the discussions that led
+        to the development of the implicit rejection algorithm.
+        I'd like to thank to all the people that provided feedback to the
+        document in the CFRG mailing list.
+        </t>
+        <t>I also thank Scott Fluhrer for the detailed review and notes.</t>
+    </section>
 
     <section anchor="test-vectors" title="Test Vectors">
         <section title="2048 bit key">
