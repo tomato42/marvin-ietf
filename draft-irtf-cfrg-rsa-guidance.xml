@@ -469,11 +469,11 @@
                    </artwork></figure>
                    </t>
                    <t>Apply the RSADP decryption primitive to
-              the RSA private key (n, d) and the ciphertext
+              the RSA private key K and the ciphertext
               representative c to produce an integer message
                    representative m:
                    <figure><artwork>
-  m = RSADP ((n, d), c).
+  m = RSADP (K, c).
                    </artwork></figure>
                    Note: the RSADP MUST be constant-time with respect of
                    message m.<vspace/>
