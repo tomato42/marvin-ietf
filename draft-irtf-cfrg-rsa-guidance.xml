@@ -284,7 +284,7 @@
             modular multiplication is used for performing the combined
             multiply-and-reduce operation. The last step of that operation
             is conditional on the value of the output. A side-channel
-            free implementation should perfom the subtraction in all cases
+            free implementation should perform the subtraction in all cases
             and then copy the result or the first operand of the subtraction
             based on sign of the result of the subtraction in side-channel
             free manner.
@@ -377,7 +377,7 @@
             <t>The m_2 = c^dQ mod (g_2 * q)</t>
             <t>If u > 2, then m_i = c^d_i mod (g_3 * r_i)</t>
         </list>
-        <t>Where g_1, g_2, ..., g_i are all uniformely selected random number
+        <t>Where g_1, g_2, ..., g_i are all uniformly selected random number
            at least 64 bits long (or at least 2 machine word sizes, whichever
            is greater).</t>
        <t>Before step 3 of the original algorithm, reduce the returned
@@ -401,7 +401,7 @@
             hides from the calling code whether the padding check
             failed or not.</t>
         <t>It should be noted that the algorithm MUST be implemented
-            as stated, otherwise in case of heteregonous environments
+            as stated, otherwise in case of heterogeneous environments
             where two implementations use the same key but implement the
             implicit rejection differently, it may be possible for the
             attacker to compare behaviour between the implementations to
@@ -583,7 +583,7 @@
         </list>
         </section>
         <section title="Security analysis">
-          <t>The resons for this solution being secure and safe to deploy
+          <t>The reasons for this solution being secure and safe to deploy
             are multi-layered, but they boil down to three things:
             the sizes of returned messages, the hiding of the padding
             check result, and the determinism of the decryption.</t>
@@ -645,7 +645,7 @@
 
         <section title="Random delays">
             <t>Commonly proposed workaround for timing attacks is to add
-                a random delay to procesing of encrypted data.
+                a random delay to processing of encrypted data.
                 This is unlikely to be successful, as the statistical
                 methods used to detect presence of the differences inherently
                 filter out noise in measurements.
@@ -971,7 +971,7 @@
 
     </references>
 
-    <section title="Acknowledgments">
+    <section title="Acknowledgements">
         <t>We would like to thank Stefan Berger for the discussions that led
         to the development of the implicit rejection algorithm.
         We'd like to thank to all the people that provided feedback to the
