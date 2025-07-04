@@ -378,7 +378,7 @@
             <t>If u > 2, then m_i = c^d_i mod (g_3 * r_i)</t>
         </list>
         <t>Where g_1, g_2, ..., g_i are all uniformely selected random number
-           at least 64 bits long (or at least 2 machine word sizes, whicher
+           at least 64 bits long (or at least 2 machine word sizes, whichever
            is greater).</t>
        <t>Before step 3 of the original algorithm, reduce the returned
           value m mod n.</t>
