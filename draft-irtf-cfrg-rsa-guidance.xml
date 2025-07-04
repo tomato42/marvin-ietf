@@ -399,7 +399,11 @@
             mode it's RECOMMENDED to implement an implicit rejection mechanism
             that completely
             hides from the calling code whether the padding check
-            failed or not.</t>
+            failed or not. This makes the code return errors for significantly
+            fewer amount of ciphertexts, only ciphertexts that are publicly
+            invalid (numerical value larger than modulus or wrong number
+            of bytes for the modulus) will return errors from the decryption
+            operation.</t>
         <t>It should be noted that the algorithm MUST be implemented
             as stated, otherwise in case of heterogeneous environments
             where two implementations use the same key but implement the
