@@ -502,6 +502,11 @@
                       <figure><artwork>
   D = I2OSP (d, k).
                       </artwork></figure>
+                      Note: when the private key is provided with CRT
+                      parameters, the value d SHOULD NOT be recomputed but
+                      rather used as-is, as there exist conflicting algorithms
+                      that may result in numerically different but equivalent
+                      values of d.
                     </t>
                     <t>Hash the private exponent using the SHA-256 algorithm:
                       <figure><artwork>
