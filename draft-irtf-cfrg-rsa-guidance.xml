@@ -98,18 +98,19 @@
         Despite those results, side-channel attacks against RSA implementations
         have proliferated for the next 25 years.
         Including attacks against simple exponentiation implementations
-        <xref target="Dhem98"/><xref target="Schindler01"/>, implementations
+        <xref target="Dhem98"/> <xref target="Schindler01"/>, implementations
         that use the Chinese Remainder Theorem optimisation
-        <xref target="Schindler00"/><xref target="Brumley03"/>
-        <xref target="Aciicmez05"/>, and implementations that use
+        <xref target="Schindler00"/> <xref target="Brumley03"/>
+        <xref target="Aciicmez05"/>,
+        and implementations that use
         either base or exponent blinding exclusively
-        <xref target="Aciicmez07"/><xref target="Aciicmez08"/>
+        <xref target="Aciicmez07"/> <xref target="Aciicmez08"/>
         <xref target="Schindler14"/>.
         </t>
         <t>Similarly, side-channel free handling of the errors from
         the RSAES-PKCS-v1_5 decryption operation is something that
         implementations struggle with
-        <xref target="Bock18"/><xref target="Kario23"/>.
+        <xref target="Bock18"/> <xref target="Kario23"/>.
         </t>
         <t>We provide general guidance to implementers of the RSA cryptosystem
         for protections against side-channel attacks, irrespective of
@@ -259,7 +260,7 @@
             through lack of multiplication operation in individual
             exponentiation steps.</t>
         <t>The recommended workaround against it, is the use of the
-            Montgomery ladder construction<xref target="Montgomery87"/>.</t>
+            Montgomery ladder construction <xref target="Montgomery87"/>.</t>
         <t>While that approach ensures that both the square and multiply
         operations are performed, the fact that the results of them are
         placed in different memory locations based on bits of the secret
@@ -358,7 +359,7 @@
             MUST be performed with side-channel free code.</t>
         <t>Use of smaller blinding factor is NOT RECOMMENDED, as values shorter
            than 64 bits have been shown to still be vulnerable to side-channel
-            attacks<xref target="Bauer12"/><xref target="Schindler11"/>.</t>
+            attacks <xref target="Bauer12"/> <xref target="Schindler11"/>.</t>
         <t>The b_1, b_2, ..., b_i factors MUST NOT be reused for multiple
             RSADP() operations.</t>
     </section>
@@ -415,9 +416,9 @@
             RSAES-PKCS-v1_5 padding checks fail. To do that, use the private
             key and the provided ciphertext to derive a static, but unknown to
             the attacker, random value. It's a combination of the method
-            documented in the TLS 1.2 (RFC 5246<xref target="RFC5246"/>)
-            and the deterministic (EC)DSA signatures (RFC 6979
-            <xref target="RFC6979"/>).</t>
+            documented in the TLS 1.2 (<xref target="RFC5246"/>)
+            and the deterministic (EC)DSA signatures
+            (<xref target="RFC6979"/>).</t>
         <section title="IRPRF">
             <t>For the calculation of the random message for implicit
             rejection we define a Pseudo-Random Function (PRF) as follows:</t>
