@@ -427,7 +427,7 @@
         <section title="IRPRF">
             <t>For the calculation of the random message for implicit
             rejection we define a Pseudo-Random Function (PRF) as follows:</t>
-            <t>IRPRF( KDK, label, length )</t>
+            <t>IRPRF (KDK, label, length)</t>
             <t>Input:</t>
             <t>KDK the key derivation key</t>
             <t>label a label making the output unique for a given KDK</t>
