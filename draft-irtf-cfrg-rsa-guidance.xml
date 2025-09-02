@@ -390,7 +390,7 @@
         <t>In case of RSA-OAEP, the padding is self-verifying, thus the
             depadding operation needs to follow the standard algorithm
             to provide a safe API to users.</t>
-        <t>It MUST ignore the value of the very fist octet of padding and
+        <t>It MUST ignore the value of the very first octet of padding and
             process the remaining bytes as if it was equal zero.</t>
         <t>The RSAES-PKCS-v1_5 encryption scheme is considered deprecated, and
             should be
