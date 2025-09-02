@@ -165,6 +165,11 @@
             <dd><t>an octet string of a SHA-256 <xref target="SHA2"/>
                    hash of D</t></dd>
 
+            <dt>HMAC (key, msg, hash)</dt>
+            <dd><t>an HMAC <xref target="RFC2104"/> calculated using
+              the specified underlying hash, with the provided key, over
+              the provided message msg</t></dd>
+
             <dt>KDK</dt>
             <dd><t>an octet string containing a Key Derivation Key for a
                 specific ciphertext C</t></dd>
