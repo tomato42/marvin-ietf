@@ -112,7 +112,7 @@
         <t>Similarly, side-channel free handling of the errors from
         the RSAES-PKCS-v1_5 decryption operation is something that
         implementations struggle with
-        <xref target="Bock18"/> <xref target="Kario23"/>.
+        <xref target="Boeck18"/> <xref target="Kario23"/>.
         </t>
         <t>We provide general guidance to implementers of the RSA cryptosystem
         for protections against side-channel attacks, irrespective of
@@ -952,7 +952,7 @@
 
      <!-- other -->
      <reference
-         anchor="Bock18"
+         anchor="Boeck18"
          target="https://www.usenix.org/conference/usenixsecurity18/presentation/bock">
        <front>
          <title>Return Of Bleichenbacher's Oracle Threat (ROBOT)</title>
