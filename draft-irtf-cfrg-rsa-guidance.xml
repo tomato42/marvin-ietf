@@ -5,6 +5,7 @@
 <!ENTITY RFC5246 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.5246.xml">
 <!ENTITY RFC6979 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6979.xml">
 <!ENTITY RFC8017 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8017.xml">
+<!ENTITY RFC8174 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8174.xml">
 
 ]>
 <?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
@@ -125,9 +126,11 @@
 
     <section title="Requirements Language">
       <t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
-      "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
-      document are to be interpreted as described in <xref
-      target="RFC2119">RFC 2119</xref>.</t>
+      "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY",
+      and "OPTIONAL" in this
+      document are to be interpreted as described in
+      <xref target="RFC2119">BCP 14</xref> <xref target="RFC8174"/> when,
+      and only when, they appear in all capitals, as shown here.</t>
     </section>
 
     <!-- This PI places the pagebreak correctly (before the section title) in the text output. -->
@@ -761,6 +764,8 @@
       &RFC5246;
 
       &RFC6979;
+
+      &RFC8174;
 
       <reference
             anchor="Bauer12"
