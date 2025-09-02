@@ -466,7 +466,8 @@
             to
              disable support for RSAES-PKCS-v1_5 padding instead.</t>
             <t>To implement implicit rejection, the
-             RSAES-PKCS1-V1_5-DECRYPT from section 7.2.2 of RFC 8017 needs
+             RSAES-PKCS1-V1_5-DECRYPT operation from section 7.2.2 of
+             RFC 8017 needs
              to be implemented as follows:</t>
         <list style="numbers">
             <t>Length checking: If the length of the ciphertext C is not k
