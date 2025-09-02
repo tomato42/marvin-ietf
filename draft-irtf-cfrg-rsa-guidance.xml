@@ -565,7 +565,7 @@
                   <t>Iterate over the 128 candidate CL lengths. For each
                   zero out high order bits so that they have the same bit
                       length as the maximum valid message size (k - 11).</t>
-                  <t>Select the last length that's not larger than k - 11,
+                  <t>Select the last length that's not larger than (k - 11),
                      use 0 if none are. Save it as AL.</t>
               </list>
               </t>
