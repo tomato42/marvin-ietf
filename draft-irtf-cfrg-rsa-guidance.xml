@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
 
+<!ENTITY RFC2104 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2104.xml">
 <!ENTITY RFC2119 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2119.xml">
 <!ENTITY RFC5246 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.5246.xml">
 <!ENTITY RFC6979 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6979.xml">
 <!ENTITY RFC8017 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8017.xml">
+<!ENTITY RFC8174 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8174.xml">
 
 ]>
 <?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
@@ -56,7 +58,7 @@
 
     <area>General</area>
 
-    <workgroup>Internet Engineering Task Force</workgroup>
+    <workgroup>Internet Research Task Force</workgroup>
 
     <keyword>RSA</keyword>
 
@@ -98,18 +100,19 @@
         Despite those results, side-channel attacks against RSA implementations
         have proliferated for the next 25 years.
         Including attacks against simple exponentiation implementations
-        <xref target="Dhem98"/><xref target="Schindler01"/>, implementations
+        <xref target="Dhem98"/> <xref target="Schindler01"/>, implementations
         that use the Chinese Remainder Theorem optimisation
-        <xref target="Schindler00"/><xref target="Brumley03"/>
-        <xref target="Aciicmez05"/>, and implementations that use
+        <xref target="Schindler00"/> <xref target="Brumley03"/>
+        <xref target="Aciicmez05"/>,
+        and implementations that use
         either base or exponent blinding exclusively
-        <xref target="Aciicmez07"/><xref target="Aciicmez08"/>
+        <xref target="Aciicmez07"/> <xref target="Aciicmez08"/>
         <xref target="Schindler14"/>.
         </t>
         <t>Similarly, side-channel free handling of the errors from
         the RSAES-PKCS-v1_5 decryption operation is something that
         implementations struggle with
-        <xref target="Bock18"/><xref target="Kario23"/>.
+        <xref target="Boeck18"/> <xref target="Kario23"/>.
         </t>
         <t>We provide general guidance to implementers of the RSA cryptosystem
         for protections against side-channel attacks, irrespective of
@@ -124,9 +127,11 @@
 
     <section title="Requirements Language">
       <t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
-      "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
-      document are to be interpreted as described in <xref
-      target="RFC2119">RFC 2119</xref>.</t>
+      "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY",
+      and "OPTIONAL" in this
+      document are to be interpreted as described in
+      <xref target="RFC2119">BCP 14</xref> <xref target="RFC8174"/> when,
+      and only when, they appear in all capitals, as shown here.</t>
     </section>
 
     <!-- This PI places the pagebreak correctly (before the section title) in the text output. -->
@@ -157,7 +162,13 @@
             <dd><t>octet string representation of d</t></dd>
 
             <dt>DH</dt>
-            <dd><t>an octet string of a SHA-256 hash of D</t></dd>
+            <dd><t>an octet string of a SHA-256 <xref target="SHA2"/>
+                   hash of D</t></dd>
+
+            <dt>HMAC (key, msg, hash)</dt>
+            <dd><t>an HMAC <xref target="RFC2104"/> calculated using
+              the specified underlying hash, with the provided key, over
+              the provided message msg</t></dd>
 
             <dt>KDK</dt>
             <dd><t>an octet string containing a Key Derivation Key for a
@@ -259,7 +270,7 @@
             through lack of multiplication operation in individual
             exponentiation steps.</t>
         <t>The recommended workaround against it, is the use of the
-            Montgomery ladder construction<xref target="Montgomery87"/>.</t>
+            Montgomery ladder construction <xref target="Montgomery87"/>.</t>
         <t>While that approach ensures that both the square and multiply
         operations are performed, the fact that the results of them are
         placed in different memory locations based on bits of the secret
@@ -358,7 +369,7 @@
             MUST be performed with side-channel free code.</t>
         <t>Use of smaller blinding factor is NOT RECOMMENDED, as values shorter
            than 64 bits have been shown to still be vulnerable to side-channel
-            attacks<xref target="Bauer12"/><xref target="Schindler11"/>.</t>
+            attacks <xref target="Bauer12"/> <xref target="Schindler11"/>.</t>
         <t>The b_1, b_2, ..., b_i factors MUST NOT be reused for multiple
             RSADP() operations.</t>
     </section>
@@ -389,7 +400,7 @@
         <t>In case of RSA-OAEP, the padding is self-verifying, thus the
             depadding operation needs to follow the standard algorithm
             to provide a safe API to users.</t>
-        <t>It MUST ignore the value of the very fist octet of padding and
+        <t>It MUST ignore the value of the very first octet of padding and
             process the remaining bytes as if it was equal zero.</t>
         <t>The RSAES-PKCS-v1_5 encryption scheme is considered deprecated, and
             should be
@@ -415,13 +426,13 @@
             RSAES-PKCS-v1_5 padding checks fail. To do that, use the private
             key and the provided ciphertext to derive a static, but unknown to
             the attacker, random value. It's a combination of the method
-            documented in the TLS 1.2 (RFC 5246<xref target="RFC5246"/>)
-            and the deterministic (EC)DSA signatures (RFC 6979
-            <xref target="RFC6979"/>).</t>
+            documented in the TLS 1.2 (<xref target="RFC5246"/>)
+            and the deterministic (EC)DSA signatures
+            (<xref target="RFC6979"/>).</t>
         <section title="IRPRF">
             <t>For the calculation of the random message for implicit
             rejection we define a Pseudo-Random Function (PRF) as follows:</t>
-            <t>IRPRF( KDK, label, length )</t>
+            <t>IRPRF (KDK, label, length)</t>
             <t>Input:</t>
             <t>KDK the key derivation key</t>
             <t>label a label making the output unique for a given KDK</t>
@@ -432,7 +443,8 @@
                 <t>If KDK is not 32 octets long, or if length is larger than
                     8192 return error and stop.</t>
                 <t>The returned value is created by concatenation of subsequent
-                    calls to a SHA-256 HMAC function with the KDK as the
+                    calls to a SHA-256 HMAC <xref target="RFC2104"/>
+                    function with the KDK as the
                     HMAC key and following octet string as the message:
                 <figure><artwork>
   P_i = I || label || bitLength
@@ -459,7 +471,8 @@
             to
              disable support for RSAES-PKCS-v1_5 padding instead.</t>
             <t>To implement implicit rejection, the
-             RSAES-PKCS1-V1_5-DECRYPT from section 7.2.2 of RFC 8017 needs
+             RSAES-PKCS1-V1_5-DECRYPT operation from section 7.2.2 of
+             RFC 8017 needs
              to be implemented as follows:</t>
         <list style="numbers">
             <t>Length checking: If the length of the ciphertext C is not k
@@ -552,7 +565,7 @@
                   <t>Iterate over the 128 candidate CL lengths. For each
                   zero out high order bits so that they have the same bit
                       length as the maximum valid message size (k - 11).</t>
-                  <t>Select the last length that's not larger than k - 11,
+                  <t>Select the last length that's not larger than (k - 11),
                      use 0 if none are. Save it as AL.</t>
               </list>
               </t>
@@ -755,11 +768,15 @@
     </references>
 
     <references title="Informative References">
+      &RFC2104;
+
       &RFC2119;
 
       &RFC5246;
 
       &RFC6979;
+
+      &RFC8174;
 
       <reference
             anchor="Bauer12"
@@ -935,7 +952,7 @@
 
      <!-- other -->
      <reference
-         anchor="Bock18"
+         anchor="Boeck18"
          target="https://www.usenix.org/conference/usenixsecurity18/presentation/bock">
        <front>
          <title>Return Of Bleichenbacher's Oracle Threat (ROBOT)</title>
@@ -977,6 +994,15 @@
             value="vol 48"/>
       </reference>
 
+      <reference
+          anchor="SHA2"
+          target="https://doi.org/10.6028/NIST.FIPS.180-4">
+        <front>
+            <title>Secure Hash Standard (SHS)</title>
+            <author><organization>National Institute of Standards and Technology</organization></author>
+            <date year="2015"/>
+        </front>
+      </reference>
 
     </references>
 
