@@ -66,7 +66,7 @@
         <t>This document specifies additions and amendments to
         RFC 8017. Specifically, it provides guidance to implementers
         of the standard to protect against side-channel attacks.
-        It also deprecates the RSAES-PKCS-v1_5 encryption scheme, but
+        It also deprecates the RSAES-PKCS-v1_5 encryption scheme, and
         provides an alternative depadding algorithm that protects against
         side-channel attacks raising from users of vulnerable APIs.
         The purpose of this specification is to increase security of
@@ -88,10 +88,9 @@
     </section>
 
     <section title="Rationale">
-        <t>The RSAES-PKCS-v1_5 encryption scheme is known to be problematic
-        since 1998,
-        when Daniel Bleichenbacher published his attack
-        <xref target="Bleichenbacher98"/>.
+        <t>Since 1998, when Daniel Bleichenbacher published his attack
+        <xref target="Bleichenbacher98"/>,
+        the RSAES-PKCS-v1_5 encryption scheme is known to be problematic.
         Side-channel attacks against public key algorithms, including RSA,
         are known to be possible since 1996 thanks to work by Paul Kocher
         <xref target="Kocher96"/>.
@@ -109,19 +108,19 @@
         <xref target="Aciicmez07"/> <xref target="Aciicmez08"/>
         <xref target="Schindler14"/>.
         </t>
-        <t>Similarly, side-channel free handling of the errors from
+        <t>Similarly, side-channel-free handling of the errors from
         the RSAES-PKCS-v1_5 decryption operation is something that
         implementations struggle with
         <xref target="Boeck18"/> <xref target="Kario23"/>.
         </t>
         <t>We provide general guidance to implementers of the RSA cryptosystem
         for protections against side-channel attacks, irrespective of
-        padding scheme used.
+        the padding scheme used.
         We also call for complete deprecation of the RSAES-PKCS-v1_5
         scheme in any deployments or protocols. For legacy use cases
         that cannot remove use of the RSAES-PKCS-v1_5 scheme we provide
         guidance how to implement it in a way that should be secure against
-        at least the simple timing side channel attacks.
+        at least the simple timing side-channel attacks.
         </t>
     </section>
 
@@ -139,7 +138,8 @@
     <?rfc needLines="8" ?>
 
     <section title="Notation">
-        <t>In this document we reuse the notation from RFC 8017, in addition,
+        <t>In this document we reuse the notation from
+            <xref target="RFC8017"/>, in addition,
             we define the following:</t>
         <dl>
             <dt>AL</dt>
@@ -188,29 +188,30 @@
 
     <section title="Side channel attacks">
         <t>Cryptographic implementations may provide a lot of indirect signals
-        to the attacker that includes information about the secret
-        processed data. Depending on type of information, those leaks can
+        to an attacker that includes information about the secret
+        processed data. Depending on the type of information, those leaks can
         be used to decrypt data or retrieve private keys.
+        Those leaks are called "side-channel leaks".
         Most common side-channels that leak information about secret
         data are:
         <list style="numbers">
             <t>Different errors returned</t>
             <t>Different processing times of operations</t>
             <t>Different patterns of jump instructions and memory accesses</t>
-            <t>Use of hardware instructions that take different amount
-               of time to execute depending on operands or result</t>
+            <t>Use of hardware instructions that take different amounts
+               of time to execute depending on operands or results</t>
        </list>
        </t>
-       <t>Some of those leaks may be detectable over the network, while
+       <t>Some of those side-channels may be detectable over the network, while
            others may require closer access to the attacked system.
            With closer access, the attacker may be able to measure
            power usage, electromagnetic emanations, or sounds and
            correlate them with specific bits of secret information.
        </t>
-       <t>Recent research into network based side channel detection has shown
-          that even very small side channels (of just few clock cycles) can
+       <t>Recent research into network-based side-channel detection has shown
+          that even very small side-channels (of just a few clock cycles) can
           be reliably detected over the network. The detectability depends
-          on the sample size the attacker is able to collect, not on size
+          on the sample size the attacker is able to collect, not on the size
           of the side-channel.
        </t>
     </section>
@@ -222,7 +223,7 @@
 
     <section title="General recommendations">
         <t>As a general rule, all operations that process secret information
-          (be it parts of the private key or parts of encrypted message)
+          (be it parts of the private key or parts of the encrypted message)
           MUST be performed with code that doesn't have secret data dependent
           branch instructions, secret data dependent memory accesses, or
         uses non-constant time machine instructions (which ones are those
@@ -245,7 +246,7 @@
        <t>For private key decryption the modular exponentiation algorithm
             MUST be constant time with regards to the output of the
             exponentiation.</t>
-       <t>In case the Chinese remainder theorem optimisation is used the
+       <t>In case the Chinese remainder theorem optimisation is used, the
         modular exponentiation algorithm must also be constant time
            with regards to the used moduli.</t>
         <section title="General recommendations">
@@ -259,19 +260,19 @@
             <t>Similarly, the size of the output buffer for multiplication
             should always be equal to the sum of buffer sizes of multiplicands.
             The output size of the modular reduction operation should
-            similarly be equal to the size of the modulus and not depend
-                on bit size of the output.</t>
+            similarly be equal to the size of the modulus and be dependent
+                on the bit size of the output.</t>
         </section>
         <section title="Montgomery ladder">
-        <t>For the modular exponentiation algorithm to be side-channel free
+        <t>For the modular exponentiation algorithm to be side-channel-free,
             every step of the calculation MUST NOT depend on the bits of
-            the exponent. In particular, use of simple square and multiply
+            the exponent. In particular, the use of simple square-and-multiply
             algorithm will leak information about bits of the exponent
-            through lack of multiplication operation in individual
+            through the lack of multiplication operation in individual
             exponentiation steps.</t>
         <t>The recommended workaround against it, is the use of the
             Montgomery ladder construction <xref target="Montgomery87"/>.</t>
-        <t>While that approach ensures that both the square and multiply
+        <t>While that approach ensures that both the square and the multiply
         operations are performed, the fact that the results of them are
         placed in different memory locations based on bits of the secret
         exponent will provide enough information for an attacker
@@ -279,8 +280,8 @@
         the implementation should ensure that both memory locations
         are accessed and updated on every step.
         </t>
-        <t>Alternatively, it's possible to implement it using the square
-          and multiply always algorithm. In such case, the implementation
+        <t>Alternatively, it's possible to implement it using the
+          square-and-multiply-always algorithm. In such case, the implementation
           needs to make sure that memory locations of both the result of the
           squaring operation and of the multiplication are accessed when
           preparing the variable for the next step of the algorithm,
@@ -294,11 +295,12 @@
             <t>To further optimise the modular reduction, the Montgomery
             modular multiplication is used for performing the combined
             multiply-and-reduce operation. The last step of that operation
-            is conditional on the value of the output. A side-channel
-            free implementation should perform the subtraction in all cases
+            is conditional on the value of the output. A
+            side-channel-free
+            implementation should perform the subtraction in all cases
             and then copy the result or the first operand of the subtraction
-            based on sign of the result of the subtraction in side-channel
-            free manner.
+            based on the sign of the result of the subtraction in the
+            side-channel-free manner.
         </t>
         </section>
     </section>
@@ -308,9 +310,9 @@
             perform all operations involving the private key with the use
             of blinding <xref target="Kocher96"/>.</t>
         <t>It should be noted that for decryption operations the
-            unblinding operation MUST be performed using side-channel free
-            code that does not leak information about the result of this
-            multiplication and reduction modulo operation.</t>
+            unblinding operation MUST be performed using side-channel-free
+            code that does not leak information about the multiplication and
+            reduction modulo operation results.</t>
         <t>To implement base blinding, select a number bb uniformly at random
             such that it is relatively prime to n and smaller than n.</t>
         <t>Compute multiplicative inverse of bb modulo n.
@@ -323,7 +325,7 @@
         <t>Before returning the value m in step 3, multiply it by bbInv mod n.
             </t>
         <t>Note: multiplication by bbInv and reduction modulo n MUST be
-            performed using side-channel free code with respect to
+            performed using side-channel-free code with respect to
             value m.</t>
         <t>As calculating multiplicative inverse is expensive, implementations
         MAY calculate new values of bb and bbInv by squaring them:
@@ -335,7 +337,7 @@
            more than one RSADP() operation.</t>
         <t>Unless the multiplication (squaring) and reduction modulo operations
             are
-           verified to be side-channel free, it's RECOMMENDED to generate
+           verified to be side-channel-free, it's RECOMMENDED to generate
            completely new blinding parameters
             every few hundred private key operations.</t>
     </section>
@@ -348,7 +350,7 @@
             form of the private key.</t>
         <t>If the key is in the first form, the pair (n, d), then the
             exponent d should be modified by adding a multiple of Euler
-            phi(n): m = c^(d + b*phi(n)) mod n. Where b is a 64 bit long
+            phi(n): m = c^(d + b*phi(n)) mod n. Where b is a 64-bit long
             uniform random number.</t>
         <t>A new value b MUST be selected for every RSADP() operation.</t>
         <t>If the key is the second form, the quintuple (p, q, dP, dQ,
@@ -366,7 +368,7 @@
             it's simple to calculate in this case.</t>
         <t>Note: the selection of random b_i values, multiplication of them
             by the result of phi() function, and addition to the exponent
-            MUST be performed with side-channel free code.</t>
+            MUST be performed with side-channel-free code.</t>
         <t>Use of smaller blinding factor is NOT RECOMMENDED, as values shorter
            than 64 bits have been shown to still be vulnerable to side-channel
             attacks <xref target="Bauer12"/> <xref target="Schindler11"/>.</t>
@@ -378,8 +380,8 @@
         <t>To protect against private key leaks, it's RECOMMENDED
            to perform blinding of the used modulus values in the CRT
            implementations.</t>
-        <t>When the key is in the first form, the pair (n, d), then
-           the used modulus is public, thus no blinding is necessary.</t>
+        <t>No blinding is necessary when the key is in the first form
+            (the pair (n, d)), as the modulus used is public.</t>
         <t>If the key is in the second form, the quintuple (p, q, dP, dQ, qInv)
             with the optional sequence f triplets (r_i, d_i, t_i), i = 3, ...,
             u, then each modulus used MUST be blinded individually.</t>
@@ -388,7 +390,7 @@
             <t>The m_2 = c^dQ mod (g_2 * q)</t>
             <t>If u > 2, then m_i = c^d_i mod (g_3 * r_i)</t>
         </list>
-        <t>Where g_1, g_2, ..., g_i are all uniformly selected random number
+        <t>Where g_1, g_2, ..., g_i are all uniformly selected random numbers
            at least 64 bits long (or at least 2 machine word sizes, whichever
            is greater).</t>
        <t>Before step 3 of the original algorithm, reduce the returned
@@ -401,7 +403,8 @@
             depadding operation needs to follow the standard algorithm
             to provide a safe API to users.</t>
         <t>The depadding operation MUST ignore the value of the very first octet of padding and
-            process the remaining bytes as if that first octet was equal zero.</t>
+            process the remaining bytes as if that first octet was equal
+            to zero.</t>
         <t>The RSAES-PKCS-v1_5 encryption scheme is considered deprecated, and
             should be
             used only to process legacy data. It MUST NOT be used as part
@@ -429,7 +432,7 @@
             documented in the TLS 1.2 (<xref target="RFC5246"/>)
             and the deterministic (EC)DSA signatures
             (<xref target="RFC6979"/>).</t>
-        <section title="IRPRF">
+        <section title="Implicit Rejection Pseudo-Random Function (IRPRF)">
             <t>For the calculation of the random message for implicit
             rejection we define a Pseudo-Random Function (PRF) as follows:</t>
             <t>IRPRF (KDK, label, length)</t>
@@ -467,7 +470,7 @@
             nor provide a usage-specific API,
             it's possible to implement an implicit rejection
              algorithm as a protection measure. It should be noted that
-            implementing it correctly is hard, thus it's RECOMMENDED instead
+            implementing it correctly is hard, thus, it's RECOMMENDED instead
             to
              disable support for RSAES-PKCS-v1_5 padding instead.</t>
             <t>To implement implicit rejection, the
@@ -560,10 +563,11 @@
               </t>
               <t>Select the alternative length for the alternative message.
               <vspace/>
-              Note: this must be performed in side-channel free way.
+              Note: this must be performed in side-channel-free way.
               <list style="letters">
                   <t>Iterate over the 128 candidate CL lengths. For each
-                  zero out high order bits so that they have the same bit
+                      candidate length zero out high-order bits so that they
+                      have the same bit
                       length as the maximum valid message size (k - 11).</t>
                   <t>Select the last length that's not larger than (k - 11),
                      use 0 if none are. Save it as AL.</t>
@@ -572,7 +576,7 @@
               </list>
            </t>
            <t>EME-PKCS1-v1_5 decoding: Separate the encoded message EM into
-          an octet string PS consisting of nonzero octets and a message
+          a padding string PS consisting of nonzero octets and a message
            M as
              <figure><artwork>
   EM = 0x00 || 0x02 || PS || 0x00 || M.
@@ -598,7 +602,7 @@
              the last L octets of EM.
              <vspace/>
              Note: The decision which length to use MUST be performed in
-             side-channel free manner. While the length of the returned
+             side-channel-free manner. While the length of the returned
              message is not considered sensitive, the read memory location is.
              As such, when returning message M both EM and AM
              memory locations MUST be read.</t>
@@ -611,19 +615,19 @@
             check result, and the determinism of the decryption.</t>
           <t>First, let's consider an API that requires that the decrypted
             messages are keys of specific size, then an algorithm that may
-            return various message lengths may look as a problem.
+            return various message lengths may look problematic.
             But, if the calling code cannot handle unexpected lengths, then
-            the attacker can simply exploit it by encrypting those sizes
-            directly, they don't need to resort to performing a Bleichenbacher
+            the attacker can simply exploit it by directly encrypting those
+            sizes, and they don't need to resort to performing a Bleichenbacher
             attack. As such, the algorithm doesn't create any new attack
             vector.</t>
-          <t>Secondly, for protection against the Bleichenbacher attack
+          <t>Secondly, for protection against a potential Bleichenbacher attack
             we need to hide the information if the decrypted plaintext
             (the result of applying the RSADP() primitive) starts with
-            specific bytes. The classical oracle for that, is the use
+            specific bytes. The classic oracle for that, is the use
             of the RSAES-PKCS-v1_5 padding check: accepted ciphertexts
             definitely start with bytes 0x00 0x02. By making the
-            decryption call always return a message the attacker can't
+            decryption call always return a message, the attacker can't
             easily differentiate plaintexts starting with specific bytes
             from ones that do not just by presence of an error in decryption.
             </t>
@@ -634,7 +638,7 @@
             decrypts to a plaintext that is correctly formatted according
             to RSAES-PKCS-v1_5 padding, then that particular ciphertext
             will always decrypt to that message. If an implementation would
-            return random messages in case of padding check failure, then
+            return random messages in case of a padding check failure, then
             further processing of them might reveal if those messages are
             always the same or always different. For example, using them
             as keys for AES-128-CBC with PKCS #7 padding will cause that
@@ -646,10 +650,10 @@
 
     <section title="Safe API">
         <t>Any API that returns an error in RSAES-PKCS-v1_5 padding check in
-        substantially
-        different manner than a successful decryption (e.g. raising
+        a substantially
+        different manner than a successful decryption (e.g., raising
         an exception, returning a null pointer, returning a different
-        type of structure) is vulnerable to side-channel attacks.
+        type of structure), is vulnerable to side-channel attacks.
         Performing all actions in a way that doesn't leak the status
         of the padding check includes the API provided to 3rd party code.
         In particular, if the RSA decryption implementation doesn't
@@ -666,31 +670,33 @@
         don't work and thus MUST NOT be used.</t>
 
         <section title="Random delays">
-            <t>Commonly proposed workaround for timing attacks is to add
-                a random delay to processing of encrypted data.
+            <t>A commonly proposed workaround for timing attacks is to add
+                a random delay to the processing of encrypted data.
                 This is unlikely to be successful, as the statistical
-                methods used to detect presence of the differences inherently
+                methods used to detect the presence of differences
+                inherently
                 filter out noise in measurements.
                 For such mitigation to be effective in practice
                 (raise attacker's work factor to gain meaningful safety
-                margin) it would need to be in the order of at least
-                few seconds if not tens of seconds. Effective sizes and
-                distributions of delays have not been subject of extensive
+                margin), it would need to be in the order of at least
+                a few seconds if not tens of seconds. Effective sizes and
+                distributions of delays have not been the subject of extensive
                 study.
             </t>
             <t>It should also be noted that such a delay would need to be
-                applied in addition to the regular mitigation (generate random
-                key, use it in case RSAES-PKCS-v1_5 padding checks).
+                applied in addition to the regular mitigation tactic
+                (generate random
+                key, and use it in case RSAES-PKCS-v1_5 padding checks fail).
                 That is, it needs to be implemented in the calling code, not
                 in the depadding code.
             </t>
             <t>At the same time, performing a simple wait masks only the
-                timing side channel. It doesn't mitigate other side-channels,
+                timing side-channel. It doesn't mitigate other side-channels,
                 like ones that depend on power usage or memory access pattern.
             </t>
         </section>
 
-        <section title="Returning random value from API">
+        <section title="Returning random value from the decryption API">
             <t>A simpler variant of the proposed implicit rejection
                algorithm, where the decryption API returns a random
                message in case the padding check fails or the decrypted
@@ -698,22 +704,22 @@
                <xref target="RFC5246"/>, isn't a universal mitigation.</t>
             <t>In case of a Bleichenbacher like attack, the attacker is
                trying to differentiate two classes of ciphertexts:
-               ones that decrypt to message of specific size
-               and ones that have invalid padding or decrypt to a message
+               (1) ones that decrypt to a message of a specific size,
+               and (2) ones that have invalid padding or decrypt to a message
                of unexpected size. That translates to two kind of values
-               being returned to calling code: either the same
+               being returned to the calling code: either the same
                message always for every decryption, or a different
                message for every decryption.</t>
             <t>If that message is later used in any operation that
-               is not side-channel free (key derivation, symmetric encryption
+               is not side-channel-free (key derivation, symmetric encryption
                padding
                removal, message parsing), then the attacker will be able
                to observe two kinds of behaviour: consistent one
-               for static messages and erratic one for randomly generated
+               for static messages and an erratic one for randomly generated
                messages.</t>
             <t>Use of such a message as a key with block cipher modes
                that require padding, like AES-CBC with PKCS #7 padding,
-               is particularly leaky as it has about 1 in 256 chance of
+               is particularly leaky as it has about a 1 in 256 chance of
                successful decryption with random key.</t>
             <t>The simple implicit rejection with random message may be
                implemented safely in TLS 1.2 because both static messages
@@ -726,8 +732,8 @@
     </section>
 
     <section title="Key generation">
-        <t>There exist multiple attacks against the generation of the
-            parameters used in the RSA cryptosystem. Those are considered
+        <t>Multiple attacks against the generation of the
+            parameters used in the RSA cryptosystem exist. Those are considered
             to be outside the scope of this document.</t>
     </section>
 
@@ -1018,8 +1024,8 @@
     </section>
 
     <section anchor="test-vectors" title="Test Vectors">
-        <section title="2048 bit key">
-            <t>Test vectors with a RSA key with a 2048 bit modulus.</t>
+        <section title="2048-bit key">
+            <t>Test vectors with an RSA key with a 2048-bit modulus.</t>
             <t>[Note to RFC Editor: please remove this paragraph] For verification of test vectors see: https://github.com/tlsfuzzer/tlslite-ng/blob/master/unit_tests/test_tlslite_utils_rsakey.py#L1694»</t>
             <section>
                 <name>Private key</name>
@@ -1246,7 +1252,7 @@ ba27b1842e7c21c0e7ef6a
 ]]></sourcecode>
             </section>
             <section>
-                <name>Invalid with null byte at the eight byte of padding</name>
+                <name>Invalid with null byte at the eighth byte of padding</name>
                 <t>This creates a plaintext with PS of 7 bytes</t>
                 <t>Hex encoded ciphertext:</t>
                 <sourcecode type="test-vectors"><![CDATA[
@@ -1283,8 +1289,8 @@ c079f4c6ddd471d38ac82d20d8b1d21f8d65f3b6907086809f4123e08d86fb38
 ]]></sourcecode>
             </section>
         </section>
-        <section title="2049 bit key">
-            <t>Test vectors that use an uncommon modulus size: 2049 bits.
+        <section title="2049-bit key">
+            <t>Test vectors that use an uncommon modulus size: 2049-bits.
             </t>
             <section>
                 <name>Private key</name>
@@ -1419,7 +1425,7 @@ fb77a373a82dabbc8233e585ea5ddfef3d0d872a4a007018005014a887349595
             <section>
                 <name>Invalid with null padded ciphertext</name>
                 <t>Ciphertext that decrypts to an invalid plaintext,
-                    with the ciphertext starting with a zero byte</t>
+                    with the ciphertext starting with a zero byte.</t>
                 <t>Hex encoded ciphertext:</t>
                 <sourcecode type="test-vectors"><![CDATA[
 000a56cfd7abf21e2c65a28b8145fee663818b6cd218601e9e62bed7de5ac74c
@@ -1522,7 +1528,7 @@ febe76b87874292b8230be9de5c88fb94a0f19b2df71ca1efeb5f772b2d9b380
 ]]></sourcecode>
             </section>
             <section>
-                <name>Invalid with null byte at the eight byte of padding</name>
+                <name>Invalid with null byte at the eighth byte of padding</name>
                 <t>This creates a plaintext with PS of 7 bytes</t>
                 <t>Hex encoded ciphertext:</t>
                 <sourcecode type="test-vectors"><![CDATA[
@@ -1561,8 +1567,8 @@ a4e88815652839f2482a8f
 ]]></sourcecode>
             </section>
         </section>
-        <section title="3072 bit key">
-            <t>Test vectors that use a key with a 3072 bit modulus</t>
+        <section title="3072-bit key">
+            <t>Test vectors that use a key with a 3072-bit modulus</t>
             <section>
                 <name>Private key</name>
                 <t>Private key to use for decryption of following test data</t>
@@ -1727,7 +1733,7 @@ e20a8094b1bb603a74330c537c5c0698c31538bd2e138c1275a1bdf24c5fa8ab
             <section>
                 <name>Invalid with null padded ciphertext</name>
                 <t>Ciphertext that decrypts to an invalid plaintext,
-                    with the ciphertext starting with a zero byte</t>
+                    with the ciphertext starting with a zero byte.</t>
                 <t>Hex encoded ciphertext:</t>
                 <sourcecode type="test-vectors"><![CDATA[
 00128e116c0d348217c1d5756611be833caec3bd19f3d2ed383c4523ef3d8a5c
@@ -1750,8 +1756,8 @@ f131340438506473f271c3fe24ca58e1c60dcc17aff8b0373637d897f627ea57
             </section>
             <section>
                 <name>Invalid with second to last length</name>
-                <t>The length of the synthetic message comes from second
-                    to last value from the PRF output as the last value
+                <t>The length of the synthetic message comes from
+                    second-to-last value from the PRF output as the last value
                     is too long for this key size.</t>
                 <t>Hex encoded ciphertext:</t>
                 <sourcecode type="test-vectors"><![CDATA[
@@ -1844,8 +1850,8 @@ a8a9301daa01bb25c7
 ]]></sourcecode>
             </section>
             <section>
-                <name>Invalid with null byte at the eight byte of padding</name>
-                <t>This creates a plaintext with PS of 7 bytes</t>
+                <name>Invalid with null byte at the eighth byte of padding</name>
+                <t>This creates a plaintext with PS of 7 bytes.</t>
                 <t>Hex encoded ciphertext:</t>
                 <sourcecode type="test-vectors"><![CDATA[
 449dfa237a70a99cb0351793ec8677882021c2aa743580bf6a0ea672055cffe8
@@ -1889,8 +1895,8 @@ aa2de6cde4e2442884
 ]]></sourcecode>
             </section>
         </section>
-        <section title="4096 bit key">
-            <t>Test vectors that use a key with a 4096 bit modulus.</t>
+        <section title="4096-bit key">
+            <t>Test vectors that use a key with a 4096-bit modulus.</t>
             <section>
                 <name>Private key</name>
                 <t>Private key to use for decryption of following test data</t>
@@ -2091,7 +2097,7 @@ e2e9b49798a9b98aa1c1c233f938937c88ad675e6297f36ba0fb161a8b42e9ee
             <section>
                 <name>Invalid with null padded ciphertext</name>
                 <t>Ciphertext that decrypts to an invalid plaintext,
-                    with the ciphertext starting with a zero byte</t>
+                    with the ciphertext starting with a zero byte.</t>
                 <t>Hex encoded ciphertext:</t>
                 <sourcecode type="test-vectors"><![CDATA[
 00cd3bf408c742514e30ebfd001708e01f42de439a09d0d4b10044628becd8bc
@@ -2118,8 +2124,9 @@ de795c55f72da44f325b71dd6ac4e3c1ef512ee8ff24ab316507c6ac60031569
             </section>
             <section>
                 <name>Invalid with second to last length</name>
-                <t>The length of the synthetic message comes from second
-                    to last value from the PRF output as the last value
+                <t>The length of the synthetic message comes from
+                    the second-to-last value from the PRF output
+                    as the last value
                     is too long for this key size.</t>
                 <t>Hex encoded ciphertext:</t>
                 <sourcecode type="test-vectors"><![CDATA[
@@ -2228,8 +2235,8 @@ a976032ff1073850e7304b6bb4b60b019a7bd870c8d3fb26b212ddfd889b9fae
 ]]></sourcecode>
             </section>
             <section>
-                <name>Invalid with null byte at the eight byte of padding</name>
-                <t>This creates a plaintext with PS of 7 bytes</t>
+                <name>Invalid with null byte at the eighth byte of padding</name>
+                <t>This creates a plaintext with PS of 7 bytes.</t>
                 <t>Hex encoded ciphertext:</t>
                 <sourcecode type="test-vectors"><![CDATA[
 3d4477615f8b49c9453d31a5d5a228610d6d3e476737c163725106fa386440ff
