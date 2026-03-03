@@ -388,7 +388,7 @@
         <list style="numbers">
             <t>The m_1 = c^dP mod (g_1 * p)</t>
             <t>The m_2 = c^dQ mod (g_2 * q)</t>
-            <t>If u > 2, then m_i = c^d_i mod (g_3 * r_i)</t>
+            <t>If u > 2, then m_i = c^d_i mod (g_i * r_i)</t>
         </list>
         <t>Where g_1, g_2, ..., g_i are all uniformly selected random numbers
            at least 64 bits long (or at least 2 machine word sizes, whichever
