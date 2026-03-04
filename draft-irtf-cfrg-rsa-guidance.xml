@@ -70,7 +70,8 @@
         provides an alternative depadding algorithm that protects against
         side-channel attacks raising from users of vulnerable APIs.
         The purpose of this specification is to increase security of
-        RSA implementations.
+        RSA implementations. The document is a product of the
+        Crypto Forum Research Group (CFRG).
       </t>
     </abstract>
   </front>
@@ -85,6 +86,10 @@
         encryption schemes leave it vulnerable to side-channel attacks.
         Protections against them are not documented in RFC 8017,
         and attacks are mentioned only in passing.</t>
+
+        <t>This document represents the consensus of the Crypto Forum Research
+        Group, and has received review by multiple group members and
+        the Crypto Panel. It is not an IETF product and is not a standard.</t>
     </section>
 
     <section title="Rationale">
