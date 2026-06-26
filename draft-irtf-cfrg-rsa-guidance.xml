@@ -23,7 +23,7 @@
 <?rfc subcompact="no" ?>
 <!-- keep one blank line between list items -->
 <!-- end of list of popular I-D processing instructions -->
-<rfc category="info" docName="draft-irtf-cfrg-rsa-guidance-08" ipr="trust200902">
+<rfc category="info" docName="draft-irtf-cfrg-rsa-guidance-09" ipr="trust200902">
   <!-- ***** FRONT MATTER ***** -->
 
   <front>
@@ -53,7 +53,7 @@
       </address>
     </author>
 
-    <date day="17" month="March" year="2026" />
+    <date day="26" month="June" year="2026" />
 
     <area>General</area>
 
