@@ -23,8 +23,7 @@
 <?rfc subcompact="no" ?>
 <!-- keep one blank line between list items -->
 <!-- end of list of popular I-D processing instructions -->
-<rfc category="info" docName="draft-irtf-cfrg-rsa-guidance-08" ipr="trust200902"
-    updates="8017">
+<rfc category="info" docName="draft-irtf-cfrg-rsa-guidance-08" ipr="trust200902">
   <!-- ***** FRONT MATTER ***** -->
 
   <front>
@@ -63,10 +62,10 @@
     <keyword>RSA</keyword>
 
     <abstract>
-        <t>This document specifies additions and amendments to
+        <t>This document specifies additions to
         RFC 8017. Specifically, it provides guidance to implementers
         of the standard to protect against side-channel attacks.
-        It also deprecates the RSAES-PKCS-v1_5 encryption scheme, and
+        It also recommends against the RSAES-PKCS-v1_5 encryption scheme, and
         provides an alternative depadding algorithm that protects against
         side-channel attacks raising from users of vulnerable APIs.
         The purpose of this specification is to increase security of
@@ -410,8 +409,8 @@
         <t>The depadding operation MUST ignore the value of the very first octet of padding and
             process the remaining bytes as if that first octet was equal
             to zero.</t>
-        <t>The RSAES-PKCS-v1_5 encryption scheme is considered deprecated, and
-            should be
+        <t>The RSAES-PKCS-v1_5 encryption scheme is considered deprecated by
+            CFRG, and should be
             used only to process legacy data. It MUST NOT be used as part
             of online protocols or API endpoints.</t>
         <t>For implementations that can't remove support for this padding
@@ -743,14 +742,15 @@
     </section>
 
     <section title="Deprecated Algorithms">
-        <t>Current protocol deployments MUST NOT use
-            encryption with RSAES-PKCS-v1_5 padding.
+        <t>Use of RSA encryption with RSAES-PKCS-v1_5 padding is NOT
+            RECOMMENDED by CFRG.
             Support for RSAES-PKCS-v1_5 SHOULD be disabled in default
             configuration of any implementation of RSA cryptosystem.
-            All new protocols MUST NOT specify RSAES-PKCS-v1_5 as a valid
+            It is RECOMMENDED by CFRG that any new protocol specifications
+            do not include RSAES-PKCS-v1_5 as a valid
             encryption padding for RSA keys.</t>
-        <t>The RSAES-PKCS-v1_5 padding MUST NOT be supported in any part of
-            online
+        <t>The CFRG stance is that RSAES-PKCS-v1_5 padding SHOUL NOT be
+            supported in any part of online
            (network-accessible) protocols or API endpoints.</t>
     </section>
 
