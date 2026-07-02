@@ -251,19 +251,19 @@
             MUST be constant time with regards to the output of the
             exponentiation.</t>
        <t>In case the Chinese remainder theorem optimisation is used, the
-        modular exponentiation algorithm must also be constant time
+           modular exponentiation algorithm MUST also be constant time
            with regards to the used moduli.</t>
         <section title="General recommendations">
             <t>It's especially important to make sure that all values that
             are secret to the attacker are stored in memory buffers that
                 have sizes determined by the public modulus.</t>
-            <t>For example, the private exponents should be stored in
+            <t>For example, the private exponents SHOULD be stored in
                 memory buffers that have sizes determined by the public
                 modulus value, not the numerical values of the exponents
                 themselves.</t>
             <t>Similarly, the size of the output buffer for multiplication
-            should always be equal to the sum of buffer sizes of multiplicands.
-            The output size of the modular reduction operation should
+            SHOULD always be equal to the sum of buffer sizes of multiplicands.
+            The output size of the modular reduction operation SHOULD
             similarly be equal to the size of the modulus and be dependent
                 on the bit size of the output.</t>
         </section>
@@ -281,7 +281,7 @@
         placed in different memory locations based on bits of the secret
         exponent will provide enough information for an attacker
             to recover the bits of the exponent. To counteract it,
-        the implementation should ensure that both memory locations
+        the implementation SHOULD ensure that both memory locations
         are accessed and updated on every step.
         </t>
         <t>Alternatively, it's possible to implement it using the
@@ -301,7 +301,7 @@
             multiply-and-reduce operation. The last step of that operation
             is conditional on the value of the output. A
             side-channel-free
-            implementation should perform the subtraction in all cases
+            implementation SHOULD perform the subtraction in all cases
             and then copy the result or the first operand of the subtraction
             based on the sign of the result of the subtraction in the
             side-channel-free manner.
@@ -410,8 +410,9 @@
             process the remaining bytes as if that first octet was equal
             to zero.</t>
         <t>The RSAES-PKCS-v1_5 encryption scheme is considered deprecated by
-            CFRG, and should be
-            used only to process legacy data. It MUST NOT be used as part
+            CFRG. It should only be used to decrypt legacy data encrypted
+            under that scheme.
+            It MUST NOT be used as part
             of online protocols or API endpoints.</t>
         <t>For implementations that can't remove support for this padding
             mode it's RECOMMENDED to implement an implicit rejection mechanism
@@ -567,7 +568,7 @@
               </t>
               <t>Select the alternative length for the alternative message.
               <vspace/>
-              Note: this must be performed in side-channel-free way.
+              Note: this MUST be performed in side-channel-free way.
               <list style="letters">
                   <t>Iterate over the 128 candidate CL lengths. For each
                       candidate length zero out high-order bits so that they
