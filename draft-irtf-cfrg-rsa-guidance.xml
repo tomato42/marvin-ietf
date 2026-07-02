@@ -218,6 +218,10 @@
           on the sample size the attacker is able to collect, not on the size
           of the side-channel.
        </t>
+       <t>Research into more local attacks, that target power usage,
+          electromagnetic emanations, etc. is ongoing, with new venues of
+          attack regularly discovered.
+       </t>
     </section>
 
     <section title="General RSA operations">
@@ -239,8 +243,8 @@
             representation in RSA decryption operations.</t>
 
         <t>All operations that use private keys SHOULD additionally employ
-        both base blinding and exponent blinding as protections against
-            leaks inside modular exponentiation code.</t>
+           both base blinding and exponent blinding as a defence in depth
+           protection against leaks inside modular exponentiation code.</t>
     </section>
 
     <section title="Side-channel free modular exponentiation">
@@ -740,6 +744,23 @@
         <t>Multiple attacks against the generation of the
             parameters used in the RSA cryptosystem exist. Those are considered
             to be outside the scope of this document.</t>
+    </section>
+
+    <section title="Non-timing side-channel attacks">
+        <t>The document focuses on protections against timing side-channel
+            attacks. Protections against side-channel attacks that exploit
+            power use, electromagnetic emanations, or other pysical effects
+            of processing secret data are a subject of intense study.
+            No golden standard for protections against those kind leakages has
+            been established, with most protections aiming to mask the
+            processing of the data against specific attacks rather than
+            eliminating the leakage completely.</t>
+         <t>As such, protections against non-timing side-channel attacks are
+            application dependant: what is the leakage of the platform
+            used for execution, what are the attacker capabilities...
+            Protection and testing against attacks that use Machine Learning
+            techniques is an open problem.
+         </t>
     </section>
 
     <section title="Deprecated Algorithms">
