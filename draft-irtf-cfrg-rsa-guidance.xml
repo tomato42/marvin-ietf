@@ -62,7 +62,7 @@
     <keyword>RSA</keyword>
 
     <abstract>
-        <t>This document specifies additions to
+        <t>This document lists additions to
         RFC 8017. Specifically, it provides guidance to implementers
         of the standard to protect against side-channel attacks.
         It also recommends against the RSAES-PKCS-v1_5 encryption scheme, and
